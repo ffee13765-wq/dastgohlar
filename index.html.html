@@ -1,0 +1,2791 @@
+<!DOCTYPE html>
+<html lang="uz">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Stanoklar olami</title>
+  <meta name="description" content="Metall kesuvchi dastgohlarning umumiy tasnifi: tokarlik, parmalash, silliqlash, frezer va boshqa stanoklar turlari, modellari va videolari.">
+  <meta name="theme-color" content="#e8590c">
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background-color: #f4f4f4;
+      color: #222222;
+      margin: 0;
+    }
+
+    h1 {
+      color: #e8590c;
+      font-size: 48px;
+      text-align: center;
+      margin: 20px;
+      cursor: pointer;
+    }
+
+    #app {
+      display: flex;
+    }
+
+    #menu {
+      width: 100%;
+      padding: 20px 20px 20px 50px;
+      margin: 0;
+      box-sizing: border-box;
+    }
+
+    #menu li {
+      font-size: 28px;
+      margin-bottom: 20px;
+      cursor: pointer;
+    }
+
+    #menu li:hover {
+      color: #e8590c;
+    }
+
+    #content {
+      display: none;
+      flex: 1;
+      padding: 20px 40px;
+      font-size: 20px;
+    }
+
+    #app.open #menu {
+      width: 340px;
+      flex-shrink: 0;
+      background-color: #e4e4e4;
+    }
+
+    #app.open #menu li {
+      font-size: 16px;
+      margin-bottom: 12px;
+    }
+
+    #app.open #menu li.active {
+      color: #e8590c;
+      font-weight: bold;
+    }
+
+    #app.open #content {
+      display: block;
+    }
+
+    .turlar {
+      list-style: none;
+      padding: 0;
+    }
+
+    .turlar li {
+      background-color: #ffffff;
+      border: 1px solid #cccccc;
+      padding: 10px 14px;
+      margin-bottom: 8px;
+      font-size: 18px;
+      cursor: pointer;
+    }
+
+    .turlar li:hover {
+      border-color: #e8590c;
+      color: #e8590c;
+    }
+
+    .tur-matn {
+      font-size: 18px;
+      line-height: 1.6;
+      white-space: pre-line;
+      margin-bottom: 20px;
+    }
+
+    .modellar {
+      list-style: none;
+      padding: 0;
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+    }
+
+    .modellar li {
+      background-color: #ffffff;
+      border: 2px solid #e8590c;
+      color: #e8590c;
+      padding: 8px 18px;
+      border-radius: 6px;
+      font-size: 18px;
+      font-weight: bold;
+      cursor: pointer;
+    }
+
+    .modellar li:hover,
+    .modellar li.active {
+      background-color: #e8590c;
+      color: #ffffff;
+    }
+
+    #modal {
+      display: none;
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: rgba(0, 0, 0, 0.75);
+      z-index: 10;
+      align-items: center;
+      justify-content: center;
+    }
+
+    #modal.show {
+      display: flex;
+    }
+
+    .modal-box {
+      background: #ffffff;
+      padding: 20px;
+      border-radius: 8px;
+      width: 90%;
+      max-width: 860px;
+      position: relative;
+    }
+
+    .modal-box h3 {
+      margin: 0 40px 12px 0;
+      color: #e8590c;
+    }
+
+    .close {
+      position: absolute;
+      top: 8px;
+      right: 16px;
+      font-size: 28px;
+      cursor: pointer;
+    }
+
+    #modal-video iframe {
+      width: 100%;
+      aspect-ratio: 16 / 9;
+      border: 0;
+    }
+
+
+    /* ===== Matn bloklari ===== */
+    .tur-matn.fmt {
+      white-space: normal;
+      display: flex;
+      flex-direction: column;
+      gap: 14px;
+    }
+
+    .blk {
+      background: #ffffff;
+      border: 1px solid #e3e3e3;
+      border-radius: 10px;
+      padding: 12px 16px;
+    }
+
+    .blk h4 {
+      margin: 0 0 8px;
+      font-size: 21px;
+      line-height: 1.25;
+      color: #c2410c;
+      font-weight: 700;
+    }
+
+    .blk p { margin: 0 0 8px; }
+    .blk p:last-child { margin-bottom: 0; }
+    .blk ul, .blk ol { margin: 4px 0 0; padding-left: 1.3em; }
+    .blk li { margin: 5px 0; }
+
+    .blk-intro {
+      border-left: 5px solid #e8590c;
+      font-size: 1.08em;
+    }
+
+    .pc {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 14px;
+    }
+
+    .blk-pros { background: #ebfbee; border-color: #b2f2bb; }
+    .blk-cons { background: #fff5f5; border-color: #ffc9c9; }
+    .blk-pros h4 { color: #1e6b30; }
+    .blk-cons h4 { color: #a61e1e; }
+
+    .blk-pros ul, .blk-cons ul { list-style: none; padding-left: 0; }
+    .blk-pros li, .blk-cons li { position: relative; padding-left: 1.5em; }
+    .blk-pros li::before { content: "\2713"; position: absolute; left: 0; color: #1e6b30; font-weight: 700; }
+    .blk-cons li::before { content: "\2717"; position: absolute; left: 0; color: #a61e1e; font-weight: 700; }
+
+    .blk-memo {
+      background: #fff3bf;
+      border: 2px solid #f08c00;
+      border-left-width: 8px;
+      box-shadow: 0 3px 12px rgba(240, 140, 0, 0.25);
+      padding: 16px 20px;
+      font-size: 1.05em;
+      font-weight: 600;
+    }
+    .blk-memo h4 { color: #7c4a00; font-size: 22px; }
+    .blk-memo h4::before { content: "\1F4A1  "; }
+
+    .blk-note {
+      font-size: 1em;
+      line-height: 1.5;
+      color: #343a40;
+      background: #f1f3f5;
+      border-radius: 8px;
+      padding: 10px 14px;
+    }
+    .blk-note::before { content: "\26A0  "; }
+
+    @media (max-width: 800px) {
+      .pc { grid-template-columns: 1fr; }
+    }
+
+    /* ===== Telefon uchun moslashuv ===== */
+    #menu-btn { display: none; }
+    #backdrop { display: none; }
+    #modal { z-index: 50; }
+    #tur { scroll-margin-top: 72px; }
+    .tur-matn { overflow-wrap: break-word; }
+    #content { min-width: 0; }
+
+    @media (max-width: 800px) {
+      body { -webkit-text-size-adjust: 100%; }
+      body.menu-open { overflow: hidden; }
+
+      #topbar {
+        position: sticky;
+        top: 0;
+        z-index: 15;
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        background: #ffffff;
+        border-bottom: 1px solid #dddddd;
+        padding: 8px 12px;
+      }
+
+      h1 {
+        font-size: 20px;
+        line-height: 1.2;
+        margin: 0;
+        text-align: left;
+        flex: 1;
+      }
+
+      body.open #menu-btn {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        width: 44px;
+        height: 44px;
+        flex-shrink: 0;
+        font-size: 24px;
+        line-height: 1;
+        color: #e8590c;
+        background: #ffffff;
+        border: 2px solid #e8590c;
+        border-radius: 8px;
+        cursor: pointer;
+        padding: 0;
+      }
+
+      #menu { padding: 8px 16px 24px 40px; }
+
+      #menu li {
+        font-size: 18px;
+        line-height: 1.35;
+        padding: 12px 0;
+        margin-bottom: 0;
+        border-bottom: 1px solid #dddddd;
+      }
+
+      #app.open #menu {
+        position: fixed;
+        top: 0;
+        left: 0;
+        bottom: 0;
+        width: 86%;
+        max-width: 340px;
+        z-index: 30;
+        overflow-y: auto;
+        padding: 16px 16px 32px 40px;
+        transform: translateX(-105%);
+        transition: transform 0.25s ease;
+      }
+
+      #app.open #menu li {
+        font-size: 17px;
+        margin-bottom: 0;
+      }
+
+      #app.open.menu-open #menu {
+        transform: none;
+        box-shadow: 4px 0 24px rgba(0, 0, 0, 0.3);
+      }
+
+      body.menu-open #backdrop {
+        display: block;
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background: rgba(0, 0, 0, 0.5);
+        z-index: 25;
+      }
+
+      #content {
+        padding: 16px 16px 40px;
+        font-size: 16px;
+      }
+
+      #content h2 { font-size: 22px; line-height: 1.25; margin-top: 4px; }
+      #content h3 { font-size: 18px; }
+
+      .turlar li {
+        font-size: 16px;
+        padding: 14px;
+        min-height: 44px;
+        box-sizing: border-box;
+      }
+
+      .tur-matn { font-size: 16px; line-height: 1.7; }
+
+      .modellar li {
+        font-size: 17px;
+        padding: 11px 18px;
+        min-height: 44px;
+        box-sizing: border-box;
+      }
+
+      .modal-box { width: 94%; padding: 14px; }
+      .modal-box h3 { margin-right: 44px; }
+      .close { top: 2px; right: 8px; font-size: 34px; padding: 4px 8px; }
+    }
+
+    /* ===== Bosh sahifa, qidiruv, navigatsiya ===== */
+    #app:not(.open) #menu { display: none; }
+    #app.open #home { display: none; }
+
+    #home {
+      flex: 1;
+      min-width: 0;
+      max-width: 1100px;
+      margin: 0 auto;
+      padding: 16px 40px 48px;
+      box-sizing: border-box;
+    }
+
+    .home-search {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      width: 100%;
+      max-width: 640px;
+      margin: 0 auto 24px;
+      padding: 14px 18px;
+      font: inherit;
+      font-size: 18px;
+      color: #4b5563;
+      background: #ffffff;
+      border: 2px solid #e8590c;
+      border-radius: 12px;
+      cursor: pointer;
+      text-align: left;
+    }
+
+    .cards {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+      gap: 16px;
+    }
+
+    .card {
+      display: flex;
+      gap: 14px;
+      align-items: flex-start;
+      text-align: left;
+      font: inherit;
+      background: #ffffff;
+      border: 1px solid #e3e3e3;
+      border-radius: 12px;
+      padding: 16px;
+      cursor: pointer;
+    }
+
+    .card:hover {
+      border-color: #e8590c;
+      box-shadow: 0 4px 14px rgba(232, 89, 12, 0.18);
+    }
+
+    .card .num {
+      flex-shrink: 0;
+      width: 40px;
+      height: 40px;
+      border-radius: 50%;
+      background: #e8590c;
+      color: #ffffff;
+      font-weight: 700;
+      font-size: 18px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .card .body { display: flex; flex-direction: column; gap: 6px; min-width: 0; }
+    .card .t { font-size: 18px; font-weight: 700; color: #222222; line-height: 1.25; }
+    .card .r { font-size: 16px; color: #4b5563; line-height: 1.35; }
+    .card .c { font-size: 16px; font-weight: 700; color: #c2410c; }
+
+    .turlar li.active {
+      border-color: #e8590c;
+      color: #e8590c;
+      font-weight: 700;
+      background: #fff4ec;
+    }
+
+    .modellar li.novideo { opacity: 0.5; border-style: dashed; }
+    .hint { font-size: 16px; color: #4b5563; margin: 8px 0 0; }
+
+    .tur-nav {
+      display: flex;
+      gap: 12px;
+      margin: 28px 0 8px;
+    }
+
+    .navbtn {
+      flex: 1 1 0;
+      max-width: 50%;
+      font: inherit;
+      font-size: 16px;
+      line-height: 1.3;
+      text-align: left;
+      color: #222222;
+      background: #ffffff;
+      border: 2px solid #e8590c;
+      border-radius: 10px;
+      padding: 10px 14px;
+      cursor: pointer;
+    }
+
+    .navbtn small { display: block; font-size: 16px; font-weight: 700; color: #c2410c; margin-bottom: 2px; }
+    .navbtn.next { margin-left: auto; text-align: right; }
+    .navbtn:hover { background: #fff4ec; }
+
+    #search-btn {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 6px;
+      height: 44px;
+      padding: 0 16px;
+      font: inherit;
+      font-size: 16px;
+      font-weight: 700;
+      color: #e8590c;
+      background: #ffffff;
+      border: 2px solid #e8590c;
+      border-radius: 22px;
+      cursor: pointer;
+    }
+
+    #search {
+      display: none;
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: rgba(0, 0, 0, 0.55);
+      z-index: 60;
+      align-items: flex-start;
+      justify-content: center;
+      padding: 6vh 12px 0;
+      box-sizing: border-box;
+    }
+
+    #search.show { display: flex; }
+
+    .search-box {
+      background: #ffffff;
+      border-radius: 12px;
+      width: 100%;
+      max-width: 640px;
+      max-height: 84vh;
+      display: flex;
+      flex-direction: column;
+      overflow: hidden;
+    }
+
+    .search-row { display: flex; gap: 8px; padding: 12px; border-bottom: 1px solid #eeeeee; }
+
+    #q {
+      flex: 1;
+      min-width: 0;
+      font: inherit;
+      font-size: 18px;
+      padding: 12px 14px;
+      border: 2px solid #e8590c;
+      border-radius: 8px;
+    }
+
+    .search-close {
+      width: 44px;
+      font-size: 30px;
+      line-height: 1;
+      color: #222222;
+      background: none;
+      border: 0;
+      cursor: pointer;
+    }
+
+    #results { overflow-y: auto; padding: 6px; }
+
+    .res {
+      display: block;
+      width: 100%;
+      text-align: left;
+      font: inherit;
+      background: #ffffff;
+      border: 0;
+      border-bottom: 1px solid #eeeeee;
+      padding: 12px;
+      cursor: pointer;
+    }
+
+    .res:hover { background: #fff4ec; }
+    .res b { display: block; font-size: 17px; color: #222222; }
+    .res small { display: block; margin-top: 3px; font-size: 16px; color: #4b5563; }
+    .res-empty { padding: 16px; color: #4b5563; line-height: 1.6; }
+
+    @media (min-width: 801px) {
+      #topbar { position: relative; }
+      #topbar h1 { padding: 0 170px; font-size: 40px; }
+      #search-btn { position: absolute; right: 24px; top: 50%; transform: translateY(-50%); }
+    }
+
+    @media (max-width: 800px) {
+      #search-btn { width: 44px; padding: 0; flex-shrink: 0; }
+      #search-btn .lbl { display: none; }
+      #home { padding: 12px 16px 40px; }
+      .cards { grid-template-columns: 1fr; gap: 12px; }
+      .tur-nav { flex-direction: column; }
+      .navbtn { max-width: none; }
+      .navbtn.next { margin-left: 0; text-align: left; }
+      #search { padding-top: 12px; }
+      .search-box { max-height: 92vh; }
+    }
+  
+    /* ===== Bosh sahifa fonidagi qalqib yuruvchi shakllar ===== */
+    #bgfx {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      z-index: 0;
+      overflow: hidden;
+      pointer-events: none;
+    }
+
+    body.open #bgfx { display: none; }
+
+    .bg-item {
+      position: absolute;
+      color: #e8590c;
+      opacity: 0.2;
+      animation: bgfloat var(--fd, 24s) ease-in-out infinite alternate;
+      animation-delay: var(--dl, 0s);
+    }
+
+    .bg-item svg {
+      display: block;
+      width: 100%;
+      height: 100%;
+      animation: bgspin var(--sd, 40s) linear infinite;
+      animation-direction: var(--dir, normal);
+    }
+
+    @keyframes bgfloat {
+      from { transform: translateY(0); }
+      to { transform: translateY(-40px); }
+    }
+
+    @keyframes bgspin {
+      to { transform: rotate(360deg); }
+    }
+
+    @media (min-width: 801px) {
+      #topbar, #home { position: relative; z-index: 1; }
+    }
+
+    @media (max-width: 800px) {
+      #bgfx { display: none; }
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      .bg-item, .bg-item svg { animation: none; }
+    }
+
+    /* ===== Bo'lim sahifasi ===== */
+    .hero {
+      position: relative;
+      overflow: hidden;
+      display: flex;
+      align-items: center;
+      gap: 18px;
+      padding: 28px 30px;
+      border-radius: 16px;
+      color: #ffffff;
+      background: linear-gradient(135deg, #e8590c, #b43c05);
+      box-shadow: 0 8px 24px rgba(232, 89, 12, 0.28);
+    }
+
+    .hero-gear {
+      position: absolute;
+      right: -40px;
+      top: -50px;
+      width: 230px;
+      height: 230px;
+      fill: #ffffff;
+      opacity: 0.15;
+      animation: bgspin 60s linear infinite;
+    }
+
+    .hero-num {
+      position: relative;
+      flex-shrink: 0;
+      width: 64px;
+      height: 64px;
+      border-radius: 50%;
+      background: #ffffff;
+      color: #c2410c;
+      font-size: 32px;
+      font-weight: 700;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .hero-txt { position: relative; min-width: 0; }
+    #content .hero h2 { margin: 0; font-size: 30px; line-height: 1.2; color: #ffffff; }
+    .hero-ru { margin-top: 6px; font-size: 16px; line-height: 1.35; opacity: 0.92; }
+
+    .hero-desc { font-size: 19px; line-height: 1.65; margin: 22px 0 14px; color: #222222; }
+
+    .chips { display: flex; flex-wrap: wrap; gap: 10px; margin-bottom: 6px; }
+    .chip {
+      background: #ffffff;
+      border: 1px solid #e3e3e3;
+      border-radius: 999px;
+      padding: 6px 14px;
+      font-size: 16px;
+      color: #374151;
+    }
+    .chip b { color: #c2410c; }
+
+    .sec-title {
+      margin: 28px 0 14px;
+      font-size: 24px;
+      line-height: 1.25;
+      color: #222222;
+    }
+
+    .turlar {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+      gap: 14px;
+    }
+
+    .turlar li {
+      display: flex;
+      align-items: center;
+      gap: 14px;
+      border-radius: 12px;
+      padding: 14px 16px;
+      margin-bottom: 0;
+      min-height: 76px;
+      box-sizing: border-box;
+      transition: transform 0.15s, box-shadow 0.15s, border-color 0.15s;
+    }
+
+    .turlar li:hover {
+      transform: translateY(-3px);
+      box-shadow: 0 6px 16px rgba(232, 89, 12, 0.18);
+    }
+
+    .turlar .tn {
+      flex-shrink: 0;
+      width: 38px;
+      height: 38px;
+      border-radius: 50%;
+      background: #fff4ec;
+      color: #c2410c;
+      font-weight: 700;
+      font-size: 18px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .turlar li:hover .tn,
+    .turlar li.active .tn { background: #e8590c; color: #ffffff; }
+
+    .turlar .tb { display: flex; flex-direction: column; gap: 3px; min-width: 0; }
+    .turlar .tt { font-size: 17px; font-weight: 700; line-height: 1.3; color: #222222; }
+    .turlar .tm { font-size: 16px; line-height: 1.3; color: #4b5563; }
+    .turlar li:hover .tt,
+    .turlar li.active .tt { color: #e8590c; }
+
+    /* ===== Tur sahifasi ===== */
+    #tur h3 { margin: 28px 0 12px; color: #222222; }
+    #tur > h3:first-child {
+      margin: 36px 0 16px;
+      padding-left: 14px;
+      border-left: 6px solid #e8590c;
+      font-size: 28px;
+      line-height: 1.25;
+    }
+    .modellar li:not(.novideo)::before { content: "\25B6  "; font-size: 0.8em; }
+
+    @media (min-width: 801px) {
+      #app.open #menu li { padding: 9px 12px; border-radius: 8px; margin-bottom: 6px; }
+      #app.open #menu li:hover { background: #ffffff; }
+      #app.open #menu li.active { background: #ffffff; }
+    }
+
+    @media (max-width: 800px) {
+      .hero { padding: 18px; gap: 14px; }
+      .hero-num { width: 48px; height: 48px; font-size: 24px; }
+      #content .hero h2 { font-size: 22px; }
+      .hero-gear { width: 160px; height: 160px; right: -30px; top: -40px; }
+      .hero-desc { font-size: 17px; margin-top: 18px; }
+      .sec-title { font-size: 21px; }
+      .turlar { grid-template-columns: 1fr; }
+      #tur > h3:first-child { font-size: 22px; }
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      .hero-gear { animation: none; }
+      .turlar li { transition: none; }
+    }
+  </style>
+</head>
+<body>
+  <div id="bgfx" aria-hidden="true"></div>
+  <header id="topbar">
+    <button id="menu-btn" type="button" aria-label="Menyuni ochish" aria-expanded="false" onclick="toggleMenu()">&#9776;</button>
+    <h1 onclick="home()">Metall kesuvchi dastgohlar umumiy tasnifi</h1>
+    <button id="search-btn" type="button" aria-label="Qidirish" onclick="openSearch()"><span class="ico">&#128269;</span><span class="lbl">Qidirish</span></button>
+  </header>
+
+  <div id="app">
+    <div id="home"></div>
+    <ol id="menu">
+      <li onclick="show(1)">Tokarlik stanoklari (Токарные)</li>
+      <li onclick="show(2)">Parmalash va teshik yo'nish dastgohlari (Сверлильные и расточные)</li>
+      <li onclick="show(3)">Silliqlash, nozik pardozlash va jilolash dastgohlari (Шлифовальные, доводочные, полировальные)</li>
+      <li onclick="show(4)">Kombinatsiyalangan va elektrofizikaviy ishlov berish dastgohlari (Комбинированные, станки для электрохимической и электрофизической обработки)</li>
+      <li onclick="show(5)">Tish va rezba ishlov berish dastgohlari (Зубо- и резьбообрабатывающие станки)</li>
+      <li onclick="show(6)">Frezer dastgohlari (Фрезерные станки)</li>
+      <li onclick="show(7)">Randalash, o'yish va tortib ishlov berish dastgohlari (Строгальные, долбежные, протяжные)</li>
+      <li onclick="show(8)">Kesish dastgohlari (Разрезные станки)</li>
+      <li onclick="show(9)">Boshqa turdagi (Разные)</li>
+    </ol>
+
+    <div id="content"></div>
+  </div>
+
+  <div id="search" onclick="closeSearch()">
+    <div class="search-box" onclick="event.stopPropagation()">
+      <div class="search-row">
+        <input id="q" type="search" placeholder="Stanok, model yoki so'z qidiring..." autocomplete="off" oninput="doSearch()">
+        <button type="button" class="search-close" aria-label="Yopish" onclick="closeSearch()">&times;</button>
+      </div>
+      <div id="results"></div>
+    </div>
+  </div>
+
+  <div id="backdrop" onclick="closeMenu()"></div>
+
+  <div id="modal" onclick="closeVideo()">
+    <div class="modal-box" onclick="event.stopPropagation()">
+      <span class="close" onclick="closeVideo()">&times;</span>
+      <h3 id="modal-title"></h3>
+      <div id="modal-video"></div>
+    </div>
+  </div>
+
+  <script>
+    var malumot = {
+      1: {
+        nom: "Tokarlik stanoklari",
+        matn: "",
+        turlar: [
+          {
+            nom: "1. Bir shpindelli avtomat va yarim avtomatlar",
+            matn: `<b>Bu nima? (Это что?)</b>
+Bitta shpindelli tokarlik stanoklari. Ularda detalni tayyorlash jarayonining deyarli hammasi (avtomatda) yoki katta qismi (yarim avtomatda) stanokning o'zi tomonidan, ishchining qo'li bilan emas, bajariladi.
+
+<b>Shpindel nima?</b>
+Shpindel stanokning asosiy aylanuvchi vali. Material yoki detal shunga mahkamlanib aylantiriladi. "Bir shpindelli" degani, bir vaqtda faqat bitta detal ishlanadi. Ko'p shpindelli stanoklarda esa bir vaqtda bir nechta detal ishlanadi (keyingi turda ko'ramiz).
+
+<b>Avtomat va yarim avtomat farqi nimada?</b>
+• <b>Avtomat:</b> butun sikl o'zi bajariladi: material beriladi, mahkamlanadi, ishlanadi, tayyor detal kesib tushiriladi. Ishchi faqat stanokni sozlaydi va materialni (uzun sterjenlarni) solib turadi.
+• <b>Yarim avtomat:</b> ishlov jarayoni o'zi bajariladi, lekin zagotovkani qo'yish, detalni olish va stanokni qayta ishga tushirishni ishchi qiladi.
+
+<b>Avtomat qanday ishlaydi?</b>
+1. Uzun metall sterjen (prutok) shpindel ichidan o'tkazilib, kollet bilan mahkamlanadi.
+2. Sterjen aylanadi, keskichlar unga kerakli shakl beradi: tashqi sirt, teshik, ariqcha, rezba.
+3. Tayyor detal maxsus kesuvchi keskich bilan sterjendan kesib tushiriladi.
+4. Kollet bo'shaydi, sterjen oldinga suriladi, yana mahkamlanadi va sikl yana boshlanadi.
+
+<b>Harakatlarni nima boshqaradi?</b>
+Klassik avtomatlarda <b>kulachokli (taqsimlash) val</b> boshqaradi. Har bir kulachokning shakli keskich qachon va qancha yurishini belgilaydi. Boshqa detalga o'tish uchun kulachoklar almashtiriladi. Zamonaviy avtomatlarda esa dasturli boshqaruv (CNC) ishlatiladi.
+
+<b>Asosiy turlari:</b>
+1. <b>Fasonli-kesuvchi avtomatlar</b> (фасонно-отрезные): kichik va oddiy shakldagi qisqa detallar uchun. Keskichlar ko'ndalang yo'nalishda harakatlanadi.
+2. <b>Bo'ylama tokarlik avtomatlari</b> (продольного точения, shveytsar tipidagi): material shpindel bilan birga uzunasiga suriladi, keskichlar yo'naltiruvchi vtulka yonida turadi. Shu sababli uzun va ingichka detallar egilmaydi va aniq chiqadi.
+3. <b>Revolver-boshli avtomatlar:</b> keskichlar aylanuvchi revolver kallakda o'rnatiladi, kallak kerakli keskichni ishchi holatga keltiradi. Teshikli, rezbali, bir necha ishlovli detallar uchun qulay.
+
+<b>Qayerda ishlatiladi?</b>
+Ommaviy va yirik seriyali ishlab chiqarishda: bolt, vint, gayka, vtulka, o'q, shtift, soat va elektronika detallari, avtomobil va maishiy texnika ehtiyot qismlari.
+
+<b>Afzalliklari:</b>
+• Unumdorligi yuqori
+• Bitta ishchi bir nechta stanokka xizmat qila oladi
+• Barcha detallar bir xil va aniq chiqadi
+• Bitta detalning tannarxi past
+
+<b>Kamchiliklari:</b>
+• Sozlash uzoq vaqt oladi va malakali sozlovchi kerak
+• Kam sondagi detal uchun foydasiz, chunki sozlashga ketgan vaqt o'zini oqlamaydi
+
+<b>Oddiy tokarlik stanogidan farqi:</b>
+Universal tokarlik stanogida (masalan, 16K20) ishchi harakatlarni o'zi boshqaradi, shuning uchun turli va kam sondagi detallar uchun qulay. Avtomat esa bir marta sozlanadi va minglab bir xil detalni o'zi tayyorlaydi.
+
+<b>Eslab qoling:</b>
+Bir shpindelli = bir vaqtda bitta detal. Avtomat = ishchi faqat sozlaydi va material soladi. Yarim avtomat = zagotovkani ishchi qo'yadi va oladi.`,
+            modellar: [
+              { nom: "1A10", video: "CJMWydsz5vU" },
+              { nom: "1A112", video: "CJMWydsz5vU" }
+            ]
+          },
+          {
+            nom: "2. Ko'p shpindelli avtomat va yarim avtomatlar",
+            matn: `<b>Bu nima? (Это что?)</b>
+Bir vaqtda bir nechta detalni ishlaydigan tokarlik stanoklari. Bitta shpindelli stanokda bir vaqtda 1 ta detal tayyorlansa, bunda 4, 6 yoki 8 ta detal tayyorlanadi.
+
+<b>Qanday tuzilgan?</b>
+Stanokda bir nechta shpindel bitta aylanuvchi blokka o'rnatilgan. Har bir shpindelda o'z detali aylanadi. Shpindellar oldida esa keskichlar turadi.
+
+<b>Qanday ishlaydi?</b>
+1. Har bir shpindel o'z joyida bitta ishlovni bajaradi (masalan, birinchisi tashqi sirtni yo'nadi, ikkinchisi teshik ochadi, uchinchisi rezba kesadi).
+2. Ishlov tugagach, shpindellar bloki bir pozitsiyaga buriladi. Har bir detal keyingi pozitsiyaga o'tadi.
+3. Oxirgi pozitsiyada detal tayyor bo'ladi va kesib tushiriladi.
+4. Blok har bir burilganda bitta tayyor detal chiqadi.
+
+<b>Avtomat va yarim avtomat farqi:</b>
+• <b>Avtomat:</b> uzun sterjendan (prutok) ishlaydi, material o'zi suriladi. Ishchi faqat sozlaydi va sterjen soladi.
+• <b>Yarim avtomat:</b> alohida zagotovkalar bilan ishlaydi, zagotovkani ishchi qo'yadi va tayyor detalni oladi.
+
+<b>Ikki xil ishlash usuli:</b>
+• <b>Ketma-ket:</b> ishlov pozitsiyalarga bo'linadi, har bir pozitsiya o'z ishini qiladi. Murakkab detallar uchun.
+• <b>Parallel:</b> har bir shpindel detalni boshidan oxirigacha o'zi ishlaydi. Oddiy detallar uchun, unumdorligi juda yuqori.
+
+<b>Afzalliklari:</b>
+• Unumdorligi bir shpindelli avtomatdan ancha yuqori
+• Bir vaqtda bir nechta ishlov bajariladi
+• Yirik seriyali ishlab chiqarishga mos
+
+<b>Kamchiliklari:</b>
+• Stanok murakkab va qimmat
+• Sozlash uzoq vaqt oladi
+• Kam sondagi detal uchun foydasiz
+
+<b>Qayerda ishlatiladi?</b>
+Ommaviy ishlab chiqarishda: bolt, vint, gayka, vtulka, shtift, avtomobil va maishiy texnika detallari.
+
+<b>Eslab qoling:</b>
+Ko'p shpindelli = bir vaqtda bir nechta detal. Blok burilganda har safar bitta tayyor detal chiqadi.`,
+            modellar: [
+              { nom: "1216", video: "Aan6PDsa2GE" },
+              { nom: "1A240", video: "earYtkecmm0" }
+            ]
+          },
+          {
+            nom: "3. Revolver (revolverli) dastgohlar",
+            matn: `<b>Bu nima? (Это что?)</b>
+Revolver kallakli tokarlik stanoklari. Revolver kallak (turel) aylanuvchi blok bo'lib, unga bir vaqtning o'zida 6-8 ta turli asbob o'rnatiladi: keskich, parma, razvyortka, metchik, plashka.
+
+<b>Qanday ishlaydi?</b>
+1. Detal shpindelga mahkamlanadi va aylanadi.
+2. Revolver kallak kerakli asbobni ishchi holatga keltiradi va detalga yaqinlashtiradi.
+3. Ishlov tugagach, kallak orqaga qaytadi va burilib, keyingi asbobni olib keladi.
+4. Shu tarzda detal asbobni almashtirmasdan ketma-ket ishlanadi: avval yo'nish, keyin parmalash, so'ng rezba kesish.
+5. Ko'ndalang keskichlar esa stanokning old tomonidagi suppurtda turadi (kesib tushirish va ariqcha ochish uchun).
+
+<b>Oddiy tokarlik stanogidan farqi:</b>
+Universal stanokda har bir yangi ishlov uchun asbobni almashtirib, qayta sozlash kerak. Revolver stanokda barcha asbob oldindan o'rnatib qo'yilgan, kallakni burish kifoya. Shu sababli vaqt tejaladi.
+
+<b>Turlari:</b>
+• <b>Prutok (sterjen) stanoklar:</b> uzun sterjendan detal tayyorlanadi.
+• <b>Patronli stanoklar:</b> alohida zagotovkalar bilan ishlaydi (quyma, pokovka).
+• Revolver kallakning o'qi <b>vertikal</b> yoki <b>gorizontal</b> bo'lishi mumkin.
+
+<b>Afzalliklari:</b>
+• Murakkab detalni bir o'rnatishda tayyorlash mumkin
+• Asbob almashtirishga vaqt ketmaydi
+• O'rta seriyali ishlab chiqarish uchun qulay
+• Avtomatga qaraganda sozlash oson va arzon
+
+<b>Kamchiliklari:</b>
+• Bir vaqtda faqat bitta asbob ishlaydi, shuning uchun ko'p shpindelli avtomatdan sekinroq
+• Dastlabki sozlashga vaqt kerak
+• Juda katta seriyalar uchun avtomat foydaliroq
+
+<b>Qayerda ishlatiladi?</b>
+O'rta seriyali ishlab chiqarishda: vtulka, flanes, gayka, bolt, shesternya zagotovkasi, armatura detallari.
+
+<b>Eslab qoling:</b>
+Revolver stanok = bir nechta asbob bitta kallakda. Kallakni burasiz, keyingi asbob ishga tushadi.`,
+            modellar: [
+              { nom: "1336", video: "s1b154fG_bw" },
+              { nom: "1A340", video: "f8OJLeMypyo" }
+            ]
+          },
+          {
+            nom: "4. Parmalash-kesish dastgohlari",
+            matn: `<b>Bu nima? (Это что?)</b>
+Tokarlik stanoklari guruhiga kiruvchi, parmalash va zagotovkani kesib tushirish (otrezka) ishlariga mo'ljallangan stanoklar. Rus tilida ular "сверлильно-отрезные" deb ataladi.
+
+<b>Qanday ishlaydi?</b>
+Zagotovka shpindelga mahkamlanadi va aylanadi. Ishchi asbob (parma yoki kesuvchi keskich) detalga yaqinlashtirilib, teshik ochiladi yoki zagotovka kerakli uzunlikda kesib tushiriladi.
+
+<b>Asosiy vazifasi:</b>
+• Parmalash: detalda teshik ochish
+• Kesib tushirish: sterjendan yoki zagotovkadan kerakli uzunlikdagi bo'lak kesib olish
+
+<b>Afzalliklari:</b>
+• Tuzilishi oddiy
+• Bir xil takrorlanuvchi ishlar uchun qulay
+
+<b>Kamchiliklari:</b>
+• Imkoniyati cheklangan, murakkab shakldagi detal uchun yaramaydi
+
+<b>Eslab qoling:</b>
+Parmalash-kesish stanoklari = teshik ochish va kesib tushirish uchun.
+
+<i>Eslatma: bu tur haqida batafsil ma'lumotni darsligingizdan tekshirib, kerak bo'lsa matnni to'ldiring.</i>`,
+            modellar: [
+              { nom: "1405", video: "" },
+              { nom: "1412", video: "" }
+            ]
+          },
+          {
+            nom: "5. Karusel (vertikal) dastgohlar",
+            matn: `<b>Bu nima? (Это что?)</b>
+Shpindeli vertikal joylashgan tokarlik stanoklari. Detal gorizontal aylanuvchi katta stolga (planshaybaga) o'rnatiladi, shuning uchun detal xuddi karusel kabi aylanadi.
+
+<b>Tuzilishi:</b>
+• Aylanuvchi planshayba (stol) va unga detal mahkamlanadi
+• Stoyka (ustun) yoki ikkita stoyka va ular orasidagi ko'ndalang to'sin (traversa)
+• Traversada va yon tomonda suppurtlar, ularda keskichlar o'rnatiladi
+
+<b>Nima uchun vertikal?</b>
+Og'ir va katta diametrli detalni yotqizib qo'yish oson, uni mahkamlash va markazlash qulay. Detalning og'irligi stolga tushadi, shuning uchun shpindel yuklanmaydi.
+
+<b>Turlari:</b>
+• <b>Bir stoykali:</b> nisbatan kichik va o'rta diametrli detallar uchun
+• <b>Ikki stoykali:</b> juda katta diametrli va og'ir detallar uchun
+
+<b>Qayerda ishlatiladi?</b>
+Og'ir mashinasozlikda: turbina disklari, katta g'ildiraklar, flanes, shkiv, quvur va reduktor korpuslari. Detalning diametri katta, uzunligi esa qisqa bo'ladi.
+
+<b>Modellarning raqami nimani bildiradi?</b>
+Karusel stanoklarda raqamning oxirgi ikki xonasi odatda planshaybaning taxminiy diametrini ko'rsatadi. Masalan, 1525 taxminan 2500 mm, 1540 taxminan 4000 mm planshaybali stanoklar. Aniq o'lchamni stanok pasportidan tekshiring.
+
+<b>Afzalliklari:</b>
+• Og'ir detalni o'rnatish oson
+• Katta o'lchamli detallarni ishlash imkoni
+• Shpindel kam yuklanadi va aniqlik yuqori
+
+<b>Kamchiliklari:</b>
+• Katta joy kerak va qimmat
+• Uzun detal (val) uchun yaramaydi
+
+<b>Eslab qoling:</b>
+Karusel stanok = vertikal o'q, aylanuvchi stol, og'ir va katta diametrli detallar.`,
+            modellar: [
+              { nom: "1525", video: "4SDOfKTnuy4" },
+              { nom: "1540", video: "NeA2c0zgIdg" }
+            ]
+          },
+          {
+            nom: "6. Tokarlik va lobovoy dastgohlar",
+            matn: `<b>Bu nima? (Это что?)</b>
+Eng keng tarqalgan, universal tokarlik stanoklari. Ularda eng ko'p ishlar qo'lda boshqariladi. Lobovoy (frontal) stanoklar esa diametri katta, lekin qisqa detallarni ishlash uchun mo'ljallangan.
+
+<b>Asosiy qismlari:</b>
+• <b>Shpindel kallagi (oldingi babka):</b> shpindel va uni aylantiruvchi uzatma
+• <b>Orqa babka:</b> uzun detalni qo'llab turadi, parma o'rnatiladi
+• <b>Suppurt:</b> keskichni detal bo'ylab va ko'ndalangiga suradi
+• <b>Yo'llanma (stanina):</b> hamma qismlar shunga o'rnatiladi
+• <b>Yurish vinti (xodovoy vint):</b> rezba kesish uchun
+
+<b>Qanday ishlar bajariladi?</b>
+Silindrsimon va konussimon sirtni yo'nish, torets (chet) yuzani yo'nish, teshikni kengaytirish, parmalash, rezba kesish, ariqcha ochish, kesib tushirish.
+
+<b>Lobovoy stanoklarning farqi:</b>
+Ularda orqa babka bo'lmaydi, detal planshaybaga mahkamlanadi. Diametri katta (masalan, shkiv, flanes, g'ildirak) va uzunligi qisqa detallar uchun mos.
+
+<b>Model misollari:</b>
+• <b>1K62:</b> markazlar balandligi 200 mm bo'lgan klassik tokarlik-vintkesish stanogi
+• <b>16K20:</b> uning zamonaviy davomchisi, juda keng tarqalgan
+
+<b>Afzalliklari:</b>
+• Juda universal, turli detallar uchun mos
+• Yakka va kichik seriyali ishlab chiqarish uchun qulay
+• Boshqarish oson, arzon
+
+<b>Kamchiliklari:</b>
+• Ishchining malakasiga bog'liq
+• Katta seriyada avtomatga qaraganda sekin
+
+<b>Eslab qoling:</b>
+Tokarlik-vintkesish stanok = hamma ishga yaraydigan universal stanok. Lobovoy = katta diametrli, qisqa detallar uchun.`,
+            modellar: [
+              { nom: "16K20", video: "hqJ0tM0qAfo" },
+              { nom: "1K62", video: "exzMnRLIVIA" }
+            ]
+          },
+          {
+            nom: "7. Ko'p keskichli dastgohlar",
+            matn: `<b>Bu nima? (Это что?)</b>
+Detal bir vaqtning o'zida bir nechta keskich bilan ishlanadigan tokarlik stanoklari. Keskichlar suppurtlarga o'rnatilib, detalning turli qismlarini bir vaqtda yo'nadi.
+
+<b>Qanday ishlaydi?</b>
+1. Detal (ko'pincha val) markazlarda yoki patronda mahkamlanadi.
+2. Suppurtda bir nechta keskich o'rnatilgan bo'ladi, har biri o'z pog'onasini ishlaydi.
+3. Suppurt bir marta yuradi va hamma pog'ona bir vaqtda tayyor bo'ladi.
+
+<b>Nima uchun kerak?</b>
+Pog'onali valni oddiy stanokda keskichlarni navbat bilan o'zgartirib, bir necha o'tishda ishlash kerak. Ko'p keskichli stanokda esa bir o'tishda tayyor bo'ladi, vaqt ancha tejaladi.
+
+<b>Afzalliklari:</b>
+• Unumdorligi yuqori
+• Bir xil o'lchamli detallar chiqadi
+• Seriyali ishlab chiqarish uchun foydali
+
+<b>Kamchiliklari:</b>
+• Sozlash uzoq va murakkab (har bir keskich o'z o'lchamiga sozlanadi)
+• Har bir yangi detal uchun qayta sozlash kerak, shuning uchun kam sonli detalga yaramaydi
+
+<b>Qayerda ishlatiladi?</b>
+O'rta va yirik seriyali ishlab chiqarishda: pog'onali vallar, o'qlar, vtulkalar, shesternya zagotovkalari.
+
+<b>Eslab qoling:</b>
+Ko'p keskichli = bir vaqtda bir nechta keskich ishlaydi, detal bir o'tishda tayyor bo'ladi.`,
+            modellar: [
+              { nom: "1713", video: "CJMWydsz5vU" },
+              { nom: "1730", video: "" }
+            ]
+          },
+          {
+            nom: "8. Ixtisoslashgan dastgohlar (val, prokat g'ildiragi va h.k.)",
+            matn: `<b>Bu nima? (Это что?)</b>
+Bitta turdagi detalni ishlash uchun maxsus yaratilgan tokarlik stanoklari. Ularning tuzilishi aynan shu detalning shakliga va o'lchamiga moslangan.
+
+<b>Qanday detallar uchun?</b>
+• Vallar, tirsakli vallar
+• Temir yo'l g'ildiraklari va g'ildirak juftlari
+• Prokat g'ildiraklari, valiklar
+• Porshenlar, halqalar va boshqa maxsus detallar
+
+<b>Model misollari:</b>
+• <b>1836:</b> g'ildirak tokarlik stanogi. Vagon va lokomotivlarning g'ildirak juftlarini yo'nish uchun (ularning profilini tiklash uchun).
+
+<b>Afzalliklari:</b>
+• Shu detal uchun eng qulay va unumdor
+• Yuqori aniqlik va sifat
+• Ishlov jarayoni soddalashadi
+
+<b>Kamchiliklari:</b>
+• Boshqa detalga yaramaydi
+• Narxi yuqori
+
+<b>Qayerda ishlatiladi?</b>
+Temir yo'l depolarida, metallurgiya va yirik mashinasozlik zavodlarida.
+
+<b>Eslab qoling:</b>
+Ixtisoslashgan stanok = faqat bitta turdagi detal uchun, lekin uni eng yaxshi ishlaydi.`,
+            modellar: [
+              { nom: "1836", video: "s-TPCMMGYkQ" },
+              { nom: "1850", video: "5tl1oENhkp8" }
+            ]
+          },
+          {
+            nom: "9. Boshqa turli tokarlik dastgohlari",
+            matn: `<b>Bu nima? (Это что?)</b>
+Yuqoridagi 8 ta turga kirmaydigan boshqa turli tokarlik stanoklari. Rus tilida ular "разные токарные станки" deb ataladi.
+
+<b>Xususiyati:</b>
+Bu guruhga o'ziga xos vazifali, noyob yoki alohida tuzilishga ega stanoklar kiradi. Ularni boshqa aniq turlarga qo'shib bo'lmaydi.
+
+<b>Eslab qoling:</b>
+Boshqa turdagi dastgohlar = tasnifning oldingi turlariga kirmagan tokarlik stanoklari.
+
+<i>Eslatma: bu tur uchun darsligingizdagi model ro'yxati va misollarni tekshirib, matnni to'ldiring.</i>`,
+            modellar: [
+              { nom: "1951", video: "" },
+              { nom: "1953", video: "" }
+            ]
+          }
+        ]
+      },
+      2: {
+        nom: "Parmalash va teshik yo'nish dastgohlari",
+        matn: "Teshik ochish (parmalash), uni kengaytirish va aniq o'lchamga keltirish (teshik yo'nish) uchun stanoklar. Bu yerda asosiy harakatni asbob (parma) bajaradi: u aylanadi va o'q bo'ylab suriladi, detal esa odatda joyida turadi.",
+        turlar: [
+          {
+            nom: "1. Vertikal parmalash dastgohlari",
+            matn: `<b>Bu nima? (Это что?)</b>
+Shpindeli vertikal joylashgan parmalash stanoklari. Parma aylanadi va pastga qarab suriladi, detal esa stolda qo'zg'almas turadi.
+
+<b>Nima ishlar bajariladi?</b>
+Parmalash, zenkerlash (teshikni kengaytirish), razvyortkalash (teshikni aniqlash), zenkovkalash va metchik bilan rezba kesish.
+
+<b>Qanday ishlaydi?</b>
+Detal stolga mahkamlanadi. Teshik o'rniga parma to'g'rilash uchun detalni qo'lda suriladi, chunki shpindel joyidan siljimaydi. Keyin parma pastga tushib teshik ochadi.
+
+<b>Model raqami nimani bildiradi?</b>
+Raqamning oxirgi ikki xonasi odatda eng katta parma diametrini (mm) ko'rsatadi. Masalan, 2Н125 taxminan 25 mm, 2Н135 taxminan 35 mm.
+
+<b>Afzalliklari:</b>
+• Tuzilishi oddiy, narxi arzon
+• Kichik va o'rta detallar uchun qulay
+• Yakka va seriyali ishlab chiqarishda keng ishlatiladi
+
+<b>Kamchiliklari:</b>
+• Katta va og'ir detalni surish qiyin
+• Bir nechta teshik ochish uchun detalni qayta-qayta surish kerak
+
+<b>Eslab qoling:</b>
+Vertikal parmalash stanok = shpindel vertikal, detal joyida turadi, parma pastga yuradi.`,
+            modellar: [
+              { nom: "2H135", video: "hPr6r8fd_dQ" }
+            ]
+          },
+          {
+            nom: "2. Bir shpindelli yarim avtomatlar",
+            matn: `<b>Bu nima? (Это что?)</b>
+Bitta shpindelli parmalash yarim avtomatlari. Ish sikli (parma yaqinlashadi, teshik ochadi, orqaga qaytadi) o'zi bajariladi. Zagotovkani qo'yish va tayyor detalni olishni ishchi qiladi.
+
+<b>Qanday ishlaydi?</b>
+1. Ishchi zagotovkani moslamaga o'rnatadi va tugmani bosadi.
+2. Parma avtomatik tushadi, teshikni ochadi va orqaga qaytadi.
+3. Ishchi tayyor detalni olib, yangisini qo'yadi.
+
+<b>Afzalliklari:</b>
+• Unumdorligi oddiy parmalash stanogidan yuqori
+• Teshiklar bir xil chuqurlikda va aniq chiqadi
+• Ishchining mehnati yengillashadi
+
+<b>Kamchiliklari:</b>
+• Bir vaqtda faqat bitta teshik ochiladi
+• Moslama kerak, shuning uchun kam sonli detalga yaramaydi
+
+<b>Qayerda ishlatiladi?</b>
+Seriyali ishlab chiqarishda, bir xil detalning ko'p nusxasi kerak bo'lganda.
+
+<b>Eslab qoling:</b>
+Bir shpindelli yarim avtomat = sikl avtomatik, detalni ishchi almashtiradi.`,
+            modellar: []
+          },
+          {
+            nom: "3. Ko'p shpindelli yarim avtomatlar",
+            matn: `<b>Bu nima? (Это что?)</b>
+Bir vaqtning o'zida bir nechta teshikni ochadigan parmalash yarim avtomatlari. Ularda ko'p shpindelli kallak o'rnatilgan, har bir shpindelda o'z parmasi bo'ladi.
+
+<b>Qanday ishlaydi?</b>
+1. Zagotovka moslamaga o'rnatiladi.
+2. Kallak pastga tushadi va hamma parma bir vaqtda o'z teshigini ochadi.
+3. Kallak orqaga qaytadi, ishchi detalni almashtiradi.
+
+<b>Afzalliklari:</b>
+• Unumdorligi juda yuqori: bir yurishda bir nechta teshik
+• Teshiklarning o'zaro joylashuvi aniq chiqadi
+• Ommaviy ishlab chiqarishga mos
+
+<b>Kamchiliklari:</b>
+• Kallak aniq bir detal uchun tayyorlanadi, boshqa detalga o'tish uchun almashtirish kerak
+• Narxi yuqori
+
+<b>Qayerda ishlatiladi?</b>
+Ommaviy ishlab chiqarishda: dvigatel bloki, qopqoqlar, flanes, korpus detallari (ko'p teshikli).
+
+<b>Eslab qoling:</b>
+Ko'p shpindelli = bir yurishda bir nechta teshik.`,
+            modellar: []
+          },
+          {
+            nom: "4. Koordinatali teshik yo'nish dastgohlari",
+            matn: `<b>Bu nima? (Это что?)</b>
+Teshiklarning o'rnini juda aniq, koordinatalar (X va Y) bo'yicha belgilaydigan teshik yo'nish stanoklari. Rus tilida "координатно-расточные станки".
+
+<b>Qanday ishlaydi?</b>
+Stol yoki shpindel kallagi koordinatalar bo'yicha mikron aniqlikda suriladi. Ishchi kerakli koordinatani o'rnatadi, shpindel shu nuqtada teshik ochadi yoki yo'nadi.
+
+<b>Nima uchun kerak?</b>
+Teshiklar orasidagi masofa va ularning joylashuvi juda aniq bo'lishi kerak bo'lgan detallar uchun.
+
+<b>Afzalliklari:</b>
+• Juda yuqori aniqlik
+• Detalni qayta o'rnatmasdan ko'p teshikni aniq joylashtirish mumkin
+
+<b>Kamchiliklari:</b>
+• Narxi juda yuqori
+• Doimiy haroratli xonada ishlashi kerak
+• Unumdorligi past, malakali ishchi kerak
+
+<b>Qayerda ishlatiladi?</b>
+Asbobsozlikda: kondukter (moslama), shtamp, press-forma va boshqa aniq detallar tayyorlashda.
+
+<b>Eslab qoling:</b>
+Koordinatali stanok = teshiklarni koordinata bo'yicha juda aniq joylashtiradi.
+
+<i>Eslatma: bu tur haqida batafsil ma'lumotni darsligingizdan tekshiring.</i>`,
+            modellar: [
+              { nom: "2450M", video: "3KAYXzOkruY" }
+            ]
+          },
+          {
+            nom: "5. Radial parmalash dastgohlari",
+            matn: `<b>Bu nima? (Это что?)</b>
+Katta va og'ir detallar uchun parmalash stanoklari. Bu yerda detal joyida turadi, parma esa detalning kerakli nuqtasiga keltiriladi.
+
+<b>Tuzilishi:</b>
+• <b>Ustun (kolonna):</b> stanokning vertikal o'qi
+• <b>Radial konsol (traversa):</b> ustun atrofida buriladi va yuqoriga-pastga suriladi
+• <b>Shpindel kallagi:</b> konsol bo'ylab suriladi
+
+<b>Qanday ishlaydi?</b>
+Konsolni burib, kallakni suradi va parmani teshik o'rniga keltirasiz. Detalni surish kerak emas.
+
+<b>Afzalliklari:</b>
+• Og'ir va katta detalda ko'p teshik ochish oson
+• Detalni qayta o'rnatish shart emas
+• Parmani istalgan nuqtaga keltirish mumkin
+
+<b>Kamchiliklari:</b>
+• Tuzilishi katta va qimmat
+• Aniqlik koordinatali stanokdan past
+
+<b>Qayerda ishlatiladi?</b>
+Og'ir mashinasozlikda: katta korpuslar, plitalar, ramalar, quyma detallar.
+
+<b>Eslab qoling:</b>
+Radial parmalash = detal turadi, parma harakatlanadi.`,
+            modellar: [
+              { nom: "2A554", video: "XNyCANUMwdc" }
+            ]
+          },
+          {
+            nom: "6. Teshik yo'nish dastgohlari",
+            matn: `<b>Bu nima? (Это что?)</b>
+Mavjud teshikni kengaytirish va uni aniq o'lcham hamda sifatga keltirish stanoklari. Rus tilida "расточные станки".
+
+<b>Teshik yo'nish nima?</b>
+Teshik oldindan quyilgan, parmalangan yoki zarb bilan ochilgan bo'ladi. Teshik yo'nishda uni kerakli diametr, aniqlik va silliqlikka keltiriladi.
+
+<b>Qanday ishlaydi?</b>
+Aylanuvchi shpindelga uzun yo'nish oprava (borshtanga) o'rnatiladi. Unga o'rnatilgan keskich teshikning ichki sirtini yo'nadi. Detal stolga mahkamlanadi.
+
+<b>Boshqa nima ishlar qilish mumkin?</b>
+Gorizontal teshik yo'nish stanoklarida frezerlash, parmalash, torets sirtini yo'nish va rezba kesish ham mumkin. Shu sababli ular universal hisoblanadi.
+
+<b>Afzalliklari:</b>
+• Katta va murakkab detalning bir necha sirtini bir o'rnatishda ishlash mumkin
+• Teshiklar o'qdoshligi va aniqligi yuqori
+
+<b>Kamchiliklari:</b>
+• Katta, qimmat
+• Sozlash uchun malakali ishchi kerak
+
+<b>Qayerda ishlatiladi?</b>
+Korpus detallari: reduktor korpusi, dvigatel bloki, stanina, qopqoqlar.
+
+<b>Eslab qoling:</b>
+Teshik yo'nish = mavjud teshikni aniq o'lchamga keltirish.`,
+            modellar: [
+              { nom: "2A636", video: "aAceXIfTRJI" }
+            ]
+          },
+          {
+            nom: "7. Olmosli teshik yo'nish dastgohlari",
+            matn: `<b>Bu nima? (Это что?)</b>
+Teshikni olmos yoki qattiq qotishmali keskich bilan juda aniq va silliq qilib yo'nadigan stanoklar. Rus tilida "алмазно-расточные станки".
+
+<b>Qanday ishlaydi?</b>
+Shpindel juda tez aylanadi, keskich esa juda kichik qatlam (ozgina) kesadi. Shu sababli sirt juda silliq va aniq chiqadi.
+
+<b>Afzalliklari:</b>
+• Juda yuqori aniqlik va silliqlik
+• Keskich uzoq xizmat qiladi
+• Seriyali ishlab chiqarishga mos
+
+<b>Kamchiliklari:</b>
+• Faqat kichik qatlam kesadi, shuning uchun teshik oldindan tayyor bo'lishi kerak
+• Narxi yuqori
+
+<b>Qayerda ishlatiladi?</b>
+Aniq teshikli detallarda: dvigatel silindrlari, shatun, vtulkalar, gidravlika detallari.
+
+<b>Eslab qoling:</b>
+Olmosli teshik yo'nish = juda tez aylanish, juda yupqa qatlam, juda silliq teshik.
+
+<i>Eslatma: bu tur haqida batafsil ma'lumotni darsligingizdan tekshiring.</i>`,
+            modellar: []
+          },
+          {
+            nom: "8. Gorizontal parmalash dastgohlari",
+            matn: `<b>Bu nima? (Это что?)</b>
+Shpindeli gorizontal joylashgan parmalash stanoklari. Parma yotiq holatda detalga kiradi.
+
+<b>Nima uchun gorizontal?</b>
+Uzun detallarda chuqur teshik ochish uchun qulay: parma detal bo'ylab kiradi, qirindi esa o'zi tushib ketadi.
+
+<b>Afzalliklari:</b>
+• Chuqur teshik ochish mumkin
+• Uzun detalni yotqizib qo'yish qulay
+• Qirindi osongina chiqib ketadi
+
+<b>Kamchiliklari:</b>
+• Maxsus parma va sovutish tizimi kerak
+• Unumdorligi nisbatan past
+
+<b>Qayerda ishlatiladi?</b>
+Uzun detallardagi chuqur teshiklar: vallar, silindrlar, gidravlik detallar.
+
+<b>Eslab qoling:</b>
+Gorizontal parmalash = shpindel yotiq, chuqur teshiklar uchun.
+
+<i>Eslatma: bu tur haqida batafsil ma'lumotni darsligingizdan tekshiring.</i>`,
+            modellar: [
+              { nom: "T2120G", video: "G9YtxONsqIk" }
+            ]
+          },
+          {
+            nom: "9. Boshqa turli parmalash dastgohlari",
+            matn: `<b>Bu nima? (Это что?)</b>
+Yuqoridagi 8 ta turga kirmaydigan boshqa parmalash stanoklari. Rus tilida "разные сверлильные станки".
+
+<b>Xususiyati:</b>
+Bu guruhga alohida vazifali yoki o'ziga xos tuzilishga ega parmalash stanoklari kiradi. Ularni aniq bir turga qo'shib bo'lmaydi.
+
+<b>Eslab qoling:</b>
+Boshqa turdagi = tasnifning oldingi turlariga kirmagan parmalash stanoklari.
+
+<i>Eslatma: bu tur uchun darsligingizdagi model ro'yxati va misollarni tekshirib, matnni to'ldiring.</i>`,
+            modellar: []
+          }
+        ]
+      },
+      3: {
+        nom: "Silliqlash, nozik pardozlash va jilolash dastgohlari",
+        matn: "Abraziv asbob (silliqlash toshi, lenta, pasta) yordamida detalga yuqori aniqlik va silliq sirt beruvchi stanoklar. Odatda termik ishlovdan keyin, yakuniy bosqichda ishlatiladi.",
+        turlar: [
+          {
+            nom: "1. Doiraviy silliqlash dastgohlari",
+            matn: `<b>Bu nima? (Это что?)</b>
+Silindrsimon va konussimon tashqi sirtni silliqlaydigan stanoklar (rus tilida "круглошлифовальные").
+
+<b>Qanday ishlaydi?</b>
+Detal markazlarda mahkamlanib aylanadi, silliqlash toshi esa katta tezlikda aylanib, detalga yaqinlashadi. Stol detal bo'ylab ilgarilanma-qaytma harakat qiladi.
+
+<b>Afzalliklari:</b>
+• Juda yuqori aniqlik va silliqlik
+• Toblangan po'latni ham ishlash mumkin
+
+<b>Kamchiliklari:</b>
+• Unumdorligi tokarlikdan past
+• Faqat yupqa qatlam olinadi
+
+<b>Qayerda ishlatiladi?</b>
+Vallar, o'qlar, vtulkalar, podshipnik halqalarining tashqi sirti.
+
+<b>Eslab qoling:</b>
+Doiraviy silliqlash = tashqi aylanma sirtni aniq va silliq qilish.`,
+            modellar: [
+              { nom: "3A151", video: "0pZrbMCO4J4" }
+            ]
+          },
+          {
+            nom: "2. Ichki silliqlash dastgohlari",
+            matn: `<b>Bu nima? (Это что?)</b>
+Teshikning ichki sirtini silliqlaydigan stanoklar (rus tilida "внутришлифовальные").
+
+<b>Qanday ishlaydi?</b>
+Detal patronda aylanadi, kichik diametrli silliqlash toshi esa juda tez aylanib teshik ichiga kiradi va uni silliqlaydi.
+
+<b>Afzalliklari:</b>
+• Teshik aniqligi va silliqligi yuqori
+• Toblangan teshikni ham ishlash mumkin
+
+<b>Kamchiliklari:</b>
+• Tosh kichik, shuning uchun tez yeyiladi
+• Unumdorligi past
+
+<b>Qayerda ishlatiladi?</b>
+Podshipnik halqalari, shesternya teshiklari, vtulkalar.
+
+<b>Eslab qoling:</b>
+Ichki silliqlash = teshik ichini silliqlash.`,
+            modellar: [
+              { nom: "3К227А", video: "c5hJTl92Wqg" }
+            ]
+          },
+          {
+            nom: "3. Obdirochno-silliqlash dastgohlari",
+            matn: `<b>Bu nima? (Это что?)</b>
+Zagotovkaning dag'al qatlamini (quyma qobig'i, zang, katta qoldiq) tez olib tashlaydigan stanoklar (rus tilida "обдирочно-шлифовальные").
+
+<b>Qanday ishlaydi?</b>
+Katta kuch bilan bosilgan yirik silliqlash toshi sirtdan qalin qatlamni oladi. Aniqlik emas, tezlik muhim.
+
+<b>Qayerda ishlatiladi?</b>
+Quyma va pokovkalarni dastlabki tozalashda, prokat zagotovkalarini tayyorlashda.
+
+<b>Eslab qoling:</b>
+Obdirochno = dag'al, tez tozalash. Aniq pardozlash emas.
+
+<i>Eslatma: bu tur haqida batafsil ma'lumotni darsligingizdan tekshiring.</i>`,
+            modellar: [
+              { nom: "3M636", video: "IyA2IpDrnmQ" }
+            ]
+          },
+          {
+            nom: "4. Ixtisoslashgan silliqlash dastgohlari",
+            matn: `<b>Bu nima? (Это что?)</b>
+Bitta turdagi detalni silliqlash uchun maxsus yaratilgan stanoklar (rus tilida "специализированные шлифовальные").
+
+<b>Qanday detallar uchun?</b>
+Tirsakli vallar, taqsimlash vallari (kulachokli), shlitsali vallar, porshen halqalari, podshipnik halqalari, rezba.
+
+<b>Afzalliklari:</b>
+• Shu detal uchun eng unumdor
+• Yuqori aniqlik
+
+<b>Kamchiliklari:</b>
+• Boshqa detalga yaramaydi
+• Narxi yuqori
+
+<b>Eslab qoling:</b>
+Ixtisoslashgan = faqat bitta turdagi detal uchun.`,
+            modellar: [
+              { nom: "MQ8260C-18", video: "16pAIj6CcMU" }
+            ]
+          },
+          {
+            nom: "5. Bo'ylama silliqlash dastgohlari",
+            matn: `<b>Bu nima? (Это что?)</b>
+Stol yoki silliqlash kallagi uzun yo'l bo'ylab yuradigan silliqlash stanoklari (rus tilida "продольно-шлифовальные").
+
+<b>Qanday ishlaydi?</b>
+Uzun detal yoki yo'naltiruvchilar stolda turadi, silliqlash kallagi esa uning bo'ylab yuradi.
+
+<b>Qayerda ishlatiladi?</b>
+Stanok yo'naltiruvchilari (stanina), uzun plita va chiziqlarni silliqlashda.
+
+<b>Eslab qoling:</b>
+Bo'ylama silliqlash = uzun yuzalarni silliqlash.
+
+<i>Eslatma: bu tur haqida batafsil ma'lumotni darsligingizdan tekshiring.</i>`,
+            modellar: [
+              { nom: "Bo'ylama silliqlash", video: "vB1rT48kKTQ" }
+            ]
+          },
+          {
+            nom: "6. O'tkirlash (zatochka) dastgohlari",
+            matn: `<b>Bu nima? (Это что?)</b>
+Kesuvchi asboblarni (keskich, parma, frezer, razvyortka) o'tkirlaydigan stanoklar (rus tilida "заточные").
+
+<b>Nima uchun kerak?</b>
+Ishlash jarayonida asbobning kesuvchi qirrasi o'tmaslashadi. Uni qayta o'tkirlab, asbob xizmat muddati uzaytiriladi.
+
+<b>Qayerda ishlatiladi?</b>
+Asbob ustaxonalarida, mashinasozlik zavodlarida.
+
+<b>Eslab qoling:</b>
+Zatochka stanok = kesuvchi asbobni o'tkirlash.`,
+            modellar: [
+              { nom: "3E642E", video: "Hem52FLnah4" }
+            ]
+          },
+          {
+            nom: "7. Yassi silliqlash dastgohlari",
+            matn: `<b>Bu nima? (Это что?)</b>
+Tekis sirtlarni silliqlaydigan stanoklar (rus tilida "плоскошлифовальные"). Stoli to'g'ri to'rtburchak yoki aylana shaklda bo'ladi.
+
+<b>Qanday ishlaydi?</b>
+Detal stolga (ko'pincha magnitli plitaga) mahkamlanadi. Silliqlash toshi uning ustida aylanadi, stol esa ilgarilanma-qaytma yoki aylanma harakat qiladi.
+
+<b>Afzalliklari:</b>
+• Tekislik va parallellik aniqligi yuqori
+• Magnit stol detalni tez mahkamlaydi
+
+<b>Kamchiliklari:</b>
+• Faqat tekis sirtlar uchun
+• Magnitlanmaydigan materialga qo'shimcha moslama kerak
+
+<b>Qayerda ishlatiladi?</b>
+Plitalar, shtamp va moslama detallari, o'lchov asboblari.
+
+<b>Eslab qoling:</b>
+Yassi silliqlash = tekis sirtni aniq silliqlash.`,
+            modellar: [
+              { nom: "3Е711В", video: "t2PM42NJ9cc" }
+            ]
+          },
+          {
+            nom: "8. Pritirka, jilolash va nozik pardozlash dastgohlari",
+            matn: `<b>Bu nima? (Это что?)</b>
+Sirtni oxirgi bosqichda juda silliq va aniq qiladigan stanoklar (rus tilida "притирочные, полировальные, доводочные").
+
+<b>Qanday ishlaydi?</b>
+Mayda abraziv pasta yoki juda mayda donali asbob yordamida sirtdan mikron darajadagi qatlam olinadi.
+
+<b>Qayerda ishlatiladi?</b>
+Kalibrlar, plunjer juftliklari, klapanlar, optik va aniq asbob detallari.
+
+<b>Eslab qoling:</b>
+Pritirka va jilolash = eng yuqori silliqlik va aniqlik uchun yakuniy ishlov.`,
+            modellar: [
+              { nom: "GAKS-F", video: "VopWUS1ELfQ" }
+            ]
+          },
+          {
+            nom: "9. Abraziv bilan ishlaydigan boshqa dastgohlar",
+            matn: `<b>Bu nima? (Это что?)</b>
+Yuqoridagi turlarga kirmaydigan, abraziv asbob bilan ishlaydigan boshqa stanoklar. Rus tilida "разные станки, работающие абразивом".
+
+<b>Eslab qoling:</b>
+Boshqa turdagi = tasnifning oldingi turlariga kirmagan abraziv stanoklar.
+
+<i>Eslatma: bu tur uchun darsligingizdagi model ro'yxati va misollarni tekshirib, matnni to'ldiring.</i>`,
+            modellar: []
+          }
+        ]
+      },
+      4: {
+        nom: "Kombinatsiyalangan va elektrofizikaviy ishlov berish dastgohlari",
+        matn: "Metallni kesuvchi asbobsiz, elektr toki, ultratovush, lazer yoki kimyoviy ta'sir bilan ishlaydigan stanoklar, shuningdek bir nechta ishlov turini birlashtirgan kombinatsiyalangan stanoklar.",
+        turlar: [
+          {
+            nom: "1. Elektroeroziya (elektroiskra) dastgohlari",
+            matn: `<b>Bu nima? (Это что?)</b>
+Metallni elektr uchqunlari (razryad) yordamida eritib va bug'latib ishlaydigan stanoklar.
+
+<b>Qanday ishlaydi?</b>
+Elektrod (asbob) va detal suyuqlik (dielektrik) ichida bir-biriga juda yaqin turadi. Ular orasida uchqun razryadlari hosil bo'ladi va detaldan mayda zarrachalar ko'chib ketadi. Asbob detalga tegmaydi.
+
+<b>Afzalliklari:</b>
+• Juda qattiq materialni (qattiq qotishma, toblangan po'lat) ishlash mumkin
+• Murakkab shakl va tor teshiklar olinadi
+
+<b>Kamchiliklari:</b>
+• Unumdorligi past
+• Faqat tok o'tkazuvchi materialga yaraydi
+
+<b>Qayerda ishlatiladi?</b>
+Shtamp, press-forma, qattiq qotishmali detallar tayyorlashda.
+
+<b>Eslab qoling:</b>
+Elektroeroziya = uchqun yordamida eritib ishlash, asbob tegmaydi.
+
+<i>Eslatma: bu tur haqida batafsil ma'lumotni darsligingizdan tekshiring.</i>`,
+            modellar: [
+              { nom: "MNC-350", video: "WMzRaZSB0to" }
+            ]
+          },
+          {
+            nom: "2. Ultratovush dastgohlari",
+            matn: `<b>Bu nima? (Это что?)</b>
+Ultratovush tebranishlari yordamida ishlaydigan stanoklar.
+
+<b>Qanday ishlaydi?</b>
+Asbob yuqori chastotada tebranadi va abraziv suspenziyani detalga uradi. Abraziv zarrachalari materialdan mayda bo'laklarni ko'chiradi.
+
+<b>Qayerda ishlatiladi?</b>
+Shisha, keramika, qattiq qotishma, yarim o'tkazgich kabi mo'rt va qattiq materiallarni ishlashda.
+
+<b>Eslab qoling:</b>
+Ultratovush = tebranuvchi asbob + abraziv, mo'rt materiallar uchun.
+
+<i>Eslatma: bu tur haqida batafsil ma'lumotni darsligingizdan tekshiring.</i>`,
+            modellar: [
+              { nom: "Ultratovush stanogi", video: "S-hnDZPp7fY" }
+            ]
+          },
+          {
+            nom: "3. Elektrokimyoviy ishlov dastgohlari",
+            matn: `<b>Bu nima? (Это что?)</b>
+Detal sirtini elektroliz orqali eritib ishlaydigan stanoklar.
+
+<b>Qanday ishlaydi?</b>
+Detal anod, asbob katod bo'ladi. Ular orasidan elektrolit oqib o'tadi, tok ta'sirida detal materiali erib ketadi.
+
+<b>Afzalliklari:</b>
+• Asbob yemirilmaydi
+• Sirt sifati yaxshi, qizish deformatsiyasi yo'q
+
+<b>Kamchiliklari:</b>
+• Elektrolit bilan ishlash murakkab va ekologik jihatdan qiyin
+• Qurilma qimmat
+
+<b>Eslab qoling:</b>
+Elektrokimyoviy = tok va elektrolit yordamida metallni eritish.
+
+<i>Eslatma: bu tur haqida batafsil ma'lumotni darsligingizdan tekshiring.</i>`,
+            modellar: [
+              { nom: "EXF-A1", video: "k1DfqbRrqjQ" }
+            ]
+          },
+          {
+            nom: "4. Lazer va nurli ishlov dastgohlari",
+            matn: `<b>Bu nima? (Это что?)</b>
+Yo'naltirilgan energiya nuri (lazer, elektron nur) bilan metallni kesadigan, teshadigan yoki payvandlaydigan stanoklar.
+
+<b>Qanday ishlaydi?</b>
+Nur bir nuqtaga to'planib, materialni eritadi yoki bug'latadi.
+
+<b>Afzalliklari:</b>
+• Juda aniq va tez
+• Kontaktsiz ishlov, asbob yeyilmaydi
+
+<b>Kamchiliklari:</b>
+• Qurilma qimmat
+• Qalin materialda cheklov bor
+
+<b>Qayerda ishlatiladi?</b>
+Listli metallni kesishda, mayda teshik ochishda, belgilash va gravyurada.
+
+<b>Eslab qoling:</b>
+Lazer = nur bilan kontaktsiz ishlov.`,
+            modellar: [
+              { nom: "MetalTec 1530", video: "pFFrru9vKEY" }
+            ]
+          },
+          {
+            nom: "5. Kombinatsiyalangan dastgohlar",
+            matn: `<b>Bu nima? (Это что?)</b>
+Bitta stanokda bir nechta ishlov turini birlashtirgan stanoklar. Masalan, tokarlik, frezerlash va parmalashni birga bajaradigan.
+
+<b>Nima uchun kerak?</b>
+Murakkab detalni bitta o'rnatishda tayyorlash mumkin, shuning uchun aniqlik oshadi va vaqt tejaladi.
+
+<b>Afzalliklari:</b>
+• Bitta o'rnatishda ko'p ishlov
+• Aniqlik yuqori, joy tejaladi
+
+<b>Kamchiliklari:</b>
+• Narxi yuqori
+• Boshqarish va sozlash murakkabroq
+
+<b>Eslab qoling:</b>
+Kombinatsiyalangan = bir stanokda bir necha xil ishlov.`,
+            modellar: [
+              { nom: "HL256S", video: "S9FT5ixZftQ" }
+            ]
+          },
+          {
+            nom: "6. Boshqa turli dastgohlar",
+            matn: `<b>Bu nima? (Это что?)</b>
+Yuqoridagi turlarga kirmaydigan boshqa elektrofizikaviy va kombinatsiyalangan stanoklar.
+
+<b>Eslab qoling:</b>
+Boshqa turdagi = tasnifning oldingi turlariga kirmagan stanoklar.
+
+<i>Eslatma: bu guruhning aniq tur ro'yxati va model misollarini darsligingizdan tekshirib, to'ldiring.</i>`,
+            modellar: []
+          }
+        ]
+      },
+      5: {
+        nom: "Tish va rezba ishlov berish dastgohlari",
+        matn: "Tishli g'ildirak (shesternya) tishlarini va rezbani kesish yoki pardozlash uchun stanoklar.",
+        turlar: [
+          {
+            nom: "1. Konussimon g'ildirak uchun zub randalash dastgohlari",
+            matn: `<b>Bu nima? (Это что?)</b>
+Konussimon (burchak ostida ulanuvchi) shesternyalarning tishini randalab ochadigan stanoklar (rus tilida "зубострогальные для конических колёс").
+
+<b>Qayerda ishlatiladi?</b>
+Reduktorlar, avtomobil ko'priklari (differensial), burchak uzatmalari.
+
+<b>Eslab qoling:</b>
+Konussimon shesternya tishi = zubostrogal stanokda.
+
+<i>Eslatma: bu tur haqida batafsil ma'lumotni darsligingizdan tekshiring.</i>`,
+            modellar: [
+              { nom: "5C276P", video: "3Gt6zJeI-ic" }
+            ]
+          },
+          {
+            nom: "2. Silindrsimon g'ildirak va shlitsali val uchun zubofrezer dastgohlari",
+            matn: `<b>Bu nima? (Это что?)</b>
+Silindrsimon shesternyalar va shlitsali vallarning tishini chervyak (qurt) frezer bilan ochadigan stanoklar (rus tilida "зубофрезерные").
+
+<b>Qanday ishlaydi?</b>
+Chervyak frezer va zagotovka bir-biri bilan muvofiqlashtirilib aylanadi, xuddi chervyak bilan g'ildirak ulanishidek. Shu bilan tishlar birin-ketin kesiladi (yurgizish usuli).
+
+<b>Afzalliklari:</b>
+• Unumdorligi yuqori
+• Turli modulli shesternyalarni bir xil asbob bilan ishlash mumkin
+
+<b>Kamchiliklari:</b>
+• Ichki tishli g'ildirak uchun yaramaydi
+• Sozlash murakkab
+
+<b>Qayerda ishlatiladi?</b>
+Tezliklar qutisi, reduktor, avtomobil shesternyalari.
+
+<b>Eslab qoling:</b>
+Zubofrezer = chervyak frezer bilan tish ochish, eng keng tarqalgan.`,
+            modellar: [
+              { nom: "5К32", video: "mjLsCFIlwZo" }
+            ]
+          },
+          {
+            nom: "3. Chervyak g'ildiragi uchun zubofrezer dastgohlari",
+            matn: `<b>Bu nima? (Это что?)</b>
+Chervyak (qurt) uzatmasining g'ildiragi tishini kesadigan zubofrezer stanoklar.
+
+<b>Qayerda ishlatiladi?</b>
+Chervyakli reduktorlar, ko'tarish mexanizmlari, stanok uzatmalari.
+
+<b>Eslab qoling:</b>
+Chervyak g'ildirak = maxsus zubofrezer stanokda ishlanadi.
+
+<i>Eslatma: bu tur haqida batafsil ma'lumotni darsligingizdan tekshiring.</i>`,
+            modellar: [
+              { nom: "Chervyak g'ildiragi (CNC)", video: "__e4YFRvI6U" }
+            ]
+          },
+          {
+            nom: "4. Tish uchlarini ishlovchi dastgohlar",
+            matn: `<b>Bu nima? (Это что?)</b>
+Shesternya tishlarining uchini (torets) yumaloqlaydigan yoki faska qiladigan stanoklar.
+
+<b>Nima uchun kerak?</b>
+Tezlik qutisida shesternyalar ulanganda ular osonroq kirishi va tish uchlari sinmasligi uchun.
+
+<b>Eslab qoling:</b>
+Tish uchini ishlash = shesternyalarning ulanishini yengillashtirish.
+
+<i>Eslatma: bu tur haqida batafsil ma'lumotni darsligingizdan tekshiring.</i>`,
+            modellar: [
+              { nom: "5N580", video: "o8G8vacokS0" }
+            ]
+          },
+          {
+            nom: "5. Rezba kesish dastgohlari",
+            matn: `<b>Bu nima? (Это что?)</b>
+Tashqi va ichki rezbani maxsus asbob bilan kesadigan stanoklar (rus tilida "резьбонарезные", "резьбофрезерные").
+
+<b>Qanday ishlaydi?</b>
+Asbob (plashka, metchik, rezba frezer, rezba kallagi) aylanib yoki surilib, detalda spiral ariqcha hosil qiladi.
+
+<b>Qayerda ishlatiladi?</b>
+Bolt, shpilka, vint, gayka va quvur rezbalarini ommaviy ishlab chiqarishda.
+
+<b>Eslab qoling:</b>
+Rezba kesish stanoklari = rezbani maxsus asbob bilan ommaviy kesish.`,
+            modellar: [
+              { nom: "MZK-95M", video: "6PI__RPJHjM" }
+            ]
+          },
+          {
+            nom: "6. Tish pardozlash va tekshirish dastgohlari",
+            matn: `<b>Bu nima? (Это что?)</b>
+Shesternya tishini kesgandan keyin uning sirtini silliqlaydigan va aniqligini tekshiradigan stanoklar (rus tilida "зубоотделочные и проверочные").
+
+<b>Nima uchun kerak?</b>
+Tishlar yaxshi ulanishi, shovqin va yeyilish kamayishi uchun.
+
+<b>Eslab qoling:</b>
+Zuboottdelochnoy = tishni pardozlash va tekshirish.
+
+<i>Eslatma: bu tur haqida batafsil ma'lumotni darsligingizdan tekshiring.</i>`,
+            modellar: [
+              { nom: "5702", video: "W65y_zVhm9I" }
+            ]
+          },
+          {
+            nom: "7. Tish va rezba silliqlash dastgohlari",
+            matn: `<b>Bu nima? (Это что?)</b>
+Termik ishlovdan keyin tish yoki rezbani silliqlab, aniq o'lchamga keltiradigan stanoklar (rus tilida "зубо- и резьбошлифовальные").
+
+<b>Afzalliklari:</b>
+• Toblangan tish va rezbani yuqori aniqlikda ishlash mumkin
+
+<b>Kamchiliklari:</b>
+• Qimmat, unumdorligi past
+
+<b>Qayerda ishlatiladi?</b>
+Aniq reduktorlar, yurgizish vintlari (xodovoy vint), kalibrlar, rezba asboblari.
+
+<b>Eslab qoling:</b>
+Tish va rezba silliqlash = toblangandan keyingi aniq ishlov.`,
+            modellar: [
+              { nom: "OSH-633", video: "ELnywu24S6g" }
+            ]
+          },
+          {
+            nom: "8. Zubodolbyozhnye (tish o'yish) dastgohlari",
+            matn: `<b>Bu nima? (Это что?)</b>
+Tishni o'yish (dolbyozhka) usulida ochadigan stanoklar. Asbob dolbyak yuqoriga-pastga yurib, tishlarni kesadi (rus tilida "зубодолбёжные").
+
+<b>Afzalliklari:</b>
+• Ichki tishli g'ildirak va blok-shesternyalarni ishlash mumkin (zubofrezer bunga yaramaydi)
+• Tishli g'ildirak yaqinida to'siq bo'lsa ham ishlaydi
+
+<b>Kamchiliklari:</b>
+• Zubofrezerga qaraganda sekinroq
+
+<b>Qayerda ishlatiladi?</b>
+Ichki tishli g'ildiraklar, ko'p tojli (blokli) shesternyalar.
+
+<b>Eslab qoling:</b>
+Zubodolbyozhnoy = ichki tish va blok-shesternyalar uchun.
+
+<i>Eslatma: bu tur raqami va nomini darsligingizdan tekshiring.</i>`,
+            modellar: [
+              { nom: "5140", video: "umKScwnfLfw" }
+            ]
+          },
+          {
+            nom: "9. Boshqa tish va rezba ishlov dastgohlari",
+            matn: `<b>Bu nima? (Это что?)</b>
+Yuqoridagi turlarga kirmaydigan boshqa tish va rezba ishlov stanoklari.
+
+<b>Eslab qoling:</b>
+Boshqa turdagi = tasnifning oldingi turlariga kirmagan stanoklar.
+
+<i>Eslatma: bu tur uchun darsligingizdagi model ro'yxati va misollarni tekshirib, matnni to'ldiring.</i>`,
+            modellar: []
+          }
+        ]
+      },
+      6: {
+        nom: "Frezer dastgohlari",
+        matn: "Aylanuvchi ko'p tishli asbob (frezer) bilan tekis va shaklli sirtlarni, ariqchalarni, tishlarni ishlaydigan stanoklar. Asosiy harakatni frezer aylanishi bajaradi, surish harakatini esa odatda detal yoki stol qiladi.",
+        turlar: [
+          {
+            nom: "1. Vertikal konsolli frezer dastgohlari",
+            matn: `<b>Bu nima? (Это что?)</b>
+Shpindeli vertikal joylashgan, stoli konsolga o'rnatilgan frezer stanoklari.
+
+<b>Tuzilishi:</b>
+• <b>Stanina (ustun):</b> asosiy qism
+• <b>Konsol:</b> yuqoriga-pastga suriladi
+• <b>Stol:</b> uch yo'nalishda (bo'ylama, ko'ndalang, vertikal) suriladi
+
+<b>Qanday ishlar bajariladi?</b>
+Tekis sirt, pog'ona, ariqcha, kontur frezerlash, torets frezer bilan ishlash.
+
+<b>Afzalliklari:</b>
+• Universal, keng tarqalgan
+• Kichik va o'rta detallar uchun qulay
+
+<b>Kamchiliklari:</b>
+• Og'ir va katta detallar uchun yaramaydi
+
+<b>Eslab qoling:</b>
+Vertikal konsolli frezer = shpindel vertikal, stol konsolda suriladi.`,
+            modellar: [
+              { nom: "6Р12", video: "SUt9m2Y-fts" }
+            ]
+          },
+          {
+            nom: "2. Uzluksiz ishlovchi frezer dastgohlari",
+            matn: `<b>Bu nima? (Это что?)</b>
+Detal aylanuvchi stol yoki baraban ustida to'xtamasdan harakat qilib, frezerlanadigan stanoklar (rus tilida "фрезерные непрерывного действия").
+
+<b>Qanday ishlaydi?</b>
+Bir tomonda detal qo'yiladi va olinadi, boshqa tomonda ishlov davom etadi. Stanok to'xtamaydi, shuning uchun vaqt yo'qotilmaydi.
+
+<b>Qayerda ishlatiladi?</b>
+Ommaviy ishlab chiqarishda, bir xil kichik detallarni ko'p miqdorda tayyorlashda.
+
+<b>Eslab qoling:</b>
+Uzluksiz = stanok to'xtamaydi, ommaviy ishlab chiqarish uchun.
+
+<i>Eslatma: bu tur haqida batafsil ma'lumotni darsligingizdan tekshiring.</i>`,
+            modellar: []
+          },
+          {
+            nom: "3. Nusxa ko'chiruvchi va gravyur frezer dastgohlari",
+            matn: `<b>Bu nima? (Это что?)</b>
+Shablon (nusxa) bo'yicha murakkab shaklli sirtni frezerlaydigan stanoklar (rus tilida "копировальные и гравировальные").
+
+<b>Qanday ishlaydi?</b>
+Ko'rsatkich (shchup) shablon bo'ylab yuradi, frezer esa shu harakatni detalga ko'chiradi.
+
+<b>Qayerda ishlatiladi?</b>
+Shtamp, press-forma, turbina parraklari, gravyura va yozuvlar.
+
+<b>Eslab qoling:</b>
+Nusxa ko'chiruvchi = shablon bo'yicha murakkab shakl.
+
+<i>Eslatma: bu tur haqida batafsil ma'lumotni darsligingizdan tekshiring.</i>`,
+            modellar: [
+              { nom: "6L463", video: "7y9oPMrztQQ" }
+            ]
+          },
+          {
+            nom: "4. Vertikal konsolsiz frezer dastgohlari",
+            matn: `<b>Bu nima? (Это что?)</b>
+Shpindeli vertikal bo'lib, stoli konsolga emas, to'g'ridan-to'g'ri staninaga o'rnatilgan frezer stanoklari (rus tilida "вертикальные бесконсольные").
+
+<b>Afzalliklari:</b>
+• Qattiqligi yuqori, og'ir yukka bardosh beradi
+• Katta kuch bilan frezerlash mumkin
+
+<b>Qayerda ishlatiladi?</b>
+Og'ir va o'rta detallarni seriyali ishlab chiqarishda.
+
+<b>Eslab qoling:</b>
+Konsolsiz = stol konsolda emas, qattiqligi yuqori.
+
+<i>Eslatma: bu tur haqida batafsil ma'lumotni darsligingizdan tekshiring.</i>`,
+            modellar: []
+          },
+          {
+            nom: "5. Bo'ylama frezer dastgohlari",
+            matn: `<b>Bu nima? (Это что?)</b>
+Katta va og'ir detallar uchun frezer stanoklari. Stol bo'ylama yo'nalishda uzun yo'l yuradi, kallaklar esa ustundan va traversadan o'rnatiladi (rus tilida "продольные").
+
+<b>Afzalliklari:</b>
+• Katta va uzun detalni ishlash mumkin
+• Bir vaqtda bir nechta kallak ishlashi mumkin
+
+<b>Kamchiliklari:</b>
+• Katta joy kerak va qimmat
+
+<b>Qayerda ishlatiladi?</b>
+Og'ir mashinasozlikda: stanina, plita, korpus detallari.
+
+<b>Eslab qoling:</b>
+Bo'ylama frezer = katta va og'ir detallar uchun.`,
+            modellar: [
+              { nom: "6M610F11", video: "QO0L6HMT3JI" }
+            ]
+          },
+          {
+            nom: "6. Konsolli keng universal frezer dastgohlari",
+            matn: `<b>Bu nima? (Это что?)</b>
+Gorizontal va vertikal shpindelni birlashtirgan, burilish imkoniyati bor eng universal frezer stanoklari (rus tilida "консольные широкоуниверсальные").
+
+<b>Afzalliklari:</b>
+• Juda ko'p turdagi ishni bajaradi
+• Yakka va kichik seriyali ishlab chiqarishga qulay
+
+<b>Kamchiliklari:</b>
+• Ommaviy ishlab chiqarishda unumdorligi past
+
+<b>Qayerda ishlatiladi?</b>
+Asbob ustaxonalari, ta'mirlash va tajriba ishlab chiqarishi.
+
+<b>Eslab qoling:</b>
+Keng universal = eng ko'p imkoniyatli frezer stanok.`,
+            modellar: [
+              { nom: "6Р82Ш", video: "KZ--FLPbjJM" }
+            ]
+          },
+          {
+            nom: "7. Gorizontal konsolli frezer dastgohlari",
+            matn: `<b>Bu nima? (Это что?)</b>
+Shpindeli gorizontal joylashgan, stoli konsolga o'rnatilgan frezer stanoklari.
+
+<b>Qanday ishlaydi?</b>
+Ko'pincha o'qqa (opravka) o'rnatilgan silindrik yoki disk frezerlar ishlatiladi. Detal stolda suriladi.
+
+<b>Qanday ishlar bajariladi?</b>
+Keng tekis sirt, ariqcha, pog'ona, shaklli sirtlarni frezerlash.
+
+<b>Eslab qoling:</b>
+Gorizontal frezer = shpindel yotiq, silindrik va disk frezerlar bilan ishlaydi.`,
+            modellar: [
+              { nom: "6M82", video: "W4WFlEI7xjg" }
+            ]
+          },
+          {
+            nom: "8. Boshqa turli frezer dastgohlari",
+            matn: `<b>Bu nima? (Это что?)</b>
+Yuqoridagi turlarga kirmaydigan boshqa frezer stanoklari. Rus tilida "разные фрезерные станки".
+
+<b>Eslab qoling:</b>
+Boshqa turdagi = tasnifning oldingi turlariga kirmagan frezer stanoklari.
+
+<i>Eslatma: bu tur uchun darsligingizdagi model ro'yxati va misollarni tekshirib, matnni to'ldiring.</i>`,
+            modellar: []
+          }
+        ]
+      },
+      7: {
+        nom: "Randalash, o'yish va tortib ishlov berish dastgohlari",
+        matn: "Asbob yoki detal to'g'ri chiziq bo'ylab ilgarilanma-qaytma harakat qilib ishlaydigan stanoklar. Randalash va o'yishda keskich yurib kesadi, tortib ishlovda (protyajka) esa ko'p tishli uzun asbob teshik yoki sirtdan o'tadi.",
+        turlar: [
+          {
+            nom: "1. Bo'ylama randalash dastgohlari",
+            matn: `<b>Bu nima? (Это что?)</b>
+Katta va uzun detallarni randalaydigan stanoklar (rus tilida "продольно-строгальные"). Detal stolda ilgarilanma-qaytma harakat qiladi, keskich esa har bir yurishdan keyin ko'ndalang suriladi.
+
+<b>Turlari:</b>
+• <b>Bir stoykali:</b> bir tomonda ustun bor
+• <b>Ikki stoykali:</b> ikki ustun va ularning ustida to'sin bor, og'ir detallar uchun
+
+<b>Afzalliklari:</b>
+• Uzun tekis sirt va yo'naltiruvchilarni ishlash mumkin
+
+<b>Kamchiliklari:</b>
+• Unumdorligi past: teskari yurishda keskich bo'sh yuradi
+• Hozirda frezer va silliqlash stanoklari bilan almashtirilmoqda
+
+<b>Qayerda ishlatiladi?</b>
+Stanina, plita, yo'naltiruvchilar kabi uzun detallar.
+
+<b>Eslab qoling:</b>
+Bo'ylama randalash = detal yuradi, keskich ko'ndalang suriladi.`,
+            modellar: [
+              { nom: "7116", video: "2hSLL4DgLL8" }
+            ]
+          },
+          {
+            nom: "2. Ko'ndalang randalash dastgohlari",
+            matn: `<b>Bu nima? (Это что?)</b>
+Keskich ilgarilanma-qaytma harakat qiladigan, detal esa joyida turadigan randalash stanoklari (rus tilida "поперечно-строгальные").
+
+<b>Qanday ishlaydi?</b>
+Ползун (ramma) keskichni oldinga va orqaga yuritadi. Har bir yurishdan keyin stol ko'ndalang yo'nalishda biroz suriladi.
+
+<b>Afzalliklari:</b>
+• Tuzilishi oddiy, arzon
+• Kichik va o'rta detallarning tekis sirti uchun qulay
+
+<b>Kamchiliklari:</b>
+• Unumdorligi past
+
+<b>Qayerda ishlatiladi?</b>
+Yakka ishlab chiqarish va ta'mirlash ustaxonalarida.
+
+<b>Eslab qoling:</b>
+Ko'ndalang randalash = keskich yuradi, detal joyida turadi.`,
+            modellar: [
+              { nom: "7305T", video: "2ZxZtPwYlLM" }
+            ]
+          },
+          {
+            nom: "3. O'yish (dolbyozhnye) dastgohlari",
+            matn: `<b>Bu nima? (Это что?)</b>
+Keskich vertikal yo'nalishda yuqoriga-pastga yuradigan stanoklar (rus tilida "долбёжные").
+
+<b>Qanday ishlar bajariladi?</b>
+Teshik ichidagi ariqcha (shponka yo'li), shlitsa, ichki shaklli teshik ochish.
+
+<b>Afzalliklari:</b>
+• Berk (tubi bor) joydagi ichki ariqchani ham ochish mumkin
+
+<b>Kamchiliklari:</b>
+• Unumdorligi past
+
+<b>Qayerda ishlatiladi?</b>
+Shkiv, shesternya, vtulkalardagi shponka ariqchalari.
+
+<b>Eslab qoling:</b>
+Dolbyozhnoy = vertikal yurish, ichki ariqcha ochish.`,
+            modellar: [
+              { nom: "7А420", video: "goDy2NF8h7U" }
+            ]
+          },
+          {
+            nom: "4. Gorizontal tortib ishlov berish dastgohlari",
+            matn: `<b>Bu nima? (Это что?)</b>
+Gorizontal joylashgan, ko'p tishli uzun asbob (protyajka) bilan ishlaydigan stanoklar (rus tilida "горизонтально-протяжные").
+
+<b>Qanday ishlaydi?</b>
+Protyajka tishlari ketma-ket kattalashib boradi. Asbob teshikdan bir marta tortib o'tkazilganda, har bir tish bir oz qatlam olib, teshikni tayyor shaklga keltiradi.
+
+<b>Afzalliklari:</b>
+• Unumdorligi juda yuqori: bir yurishda ishlov tugaydi
+• Aniqlik va sirt sifati yaxshi
+
+<b>Kamchiliklari:</b>
+• Har bir shakl uchun alohida qimmat asbob kerak
+• Faqat seriyali ishlab chiqarishda foydali
+
+<b>Qayerda ishlatiladi?</b>
+Shlitsali, shponkali, shaklli teshiklar, avtomobil va traktor detallari.
+
+<b>Eslab qoling:</b>
+Protyajka = bir tortishda tayyor shakl, ommaviy ishlab chiqarish uchun.`,
+            modellar: [
+              { nom: "7NVM14.1", video: "bxEEwh3yJHY" }
+            ]
+          },
+          {
+            nom: "5. Vertikal tortib ishlov berish dastgohlari",
+            matn: `<b>Bu nima? (Это что?)</b>
+Protyajka vertikal yo'nalishda harakat qiladigan stanoklar (rus tilida "вертикально-протяжные").
+
+<b>Afzalliklari:</b>
+• Kam joy egallaydi
+• Detalni qo'yish va olish qulay
+
+<b>Qayerda ishlatiladi?</b>
+Ichki va tashqi sirtlarni tortib ishlashda, ko'pincha qisqa protyajkalar bilan.
+
+<b>Eslab qoling:</b>
+Vertikal protyajka = protyajka vertikal yuradi, joyni tejaydi.`,
+            modellar: [
+              { nom: "7A523", video: "KzNEGahzthk" }
+            ]
+          },
+          {
+            nom: "6. Boshqa turli randalash va tortib ishlov dastgohlari",
+            matn: `<b>Bu nima? (Это что?)</b>
+Yuqoridagi turlarga kirmaydigan boshqa randalash, o'yish va tortib ishlov stanoklari.
+
+<b>Eslab qoling:</b>
+Boshqa turdagi = tasnifning oldingi turlariga kirmagan stanoklar.
+
+<i>Eslatma: bu tur uchun darsligingizdagi model ro'yxati va misollarni tekshirib, matnni to'ldiring.</i>`,
+            modellar: []
+          }
+        ]
+      },
+      8: {
+        nom: "Kesish dastgohlari",
+        matn: "Prokat, sterjen, quvur va boshqa zagotovkalarni kerakli uzunlikdagi bo'laklarga kesish uchun stanoklar (rus tilida \"разрезные станки\").",
+        turlar: [
+          {
+            nom: "1. Keskich bilan kesuvchi dastgohlar",
+            matn: `<b>Bu nima? (Это что?)</b>
+Zagotovkani tokarlik keskichi yordamida kesib ajratadigan stanoklar.
+
+<b>Qanday ishlaydi?</b>
+Zagotovka aylanadi, kesuvchi keskich ko'ndalang suriladi va sterjenni kesib tushiradi.
+
+<b>Eslab qoling:</b>
+Keskichli kesish = aylanuvchi zagotovkani keskich bilan kesib olish.
+
+<i>Eslatma: bu tur haqida batafsil ma'lumotni darsligingizdan tekshiring.</i>`,
+            modellar: []
+          },
+          {
+            nom: "2. Abraziv doira bilan kesuvchi dastgohlar",
+            matn: `<b>Bu nima? (Это что?)</b>
+Yupqa abraziv doira (disk) yordamida kesadigan stanoklar.
+
+<b>Afzalliklari:</b>
+• Juda qattiq va toblangan materialni ham kesadi
+• Kesim tekis va toza
+
+<b>Kamchiliklari:</b>
+• Disk tez yeyiladi
+• Kesilgan joy qizishi mumkin
+
+<b>Eslab qoling:</b>
+Abraziv kesish = yupqa abraziv disk, qattiq materiallar uchun.`,
+            modellar: [
+              { nom: "SOM 400", video: "CFBMmtWt9ok" }
+            ]
+          },
+          {
+            nom: "3. Ishqalanish diski bilan kesuvchi dastgohlar",
+            matn: `<b>Bu nima? (Это что?)</b>
+Tishsiz tekis disk juda katta tezlikda aylanib, ishqalanishdan qizdirib, metallni kesadigan stanoklar.
+
+<b>Eslab qoling:</b>
+Ishqalanish diski = tishsiz disk, ishqalanish issiqligi bilan kesadi.
+
+<i>Eslatma: bu tur haqida batafsil ma'lumotni darsligingizdan tekshiring.</i>`,
+            modellar: []
+          },
+          {
+            nom: "4. Ishlov bilan birga to'g'rilab kesuvchi dastgohlar",
+            matn: `<b>Bu nima? (Это что?)</b>
+Sim yoki sterjenni to'g'rilab, kerakli uzunlikda kesadigan stanoklar (rus tilida "правильно-отрезные").
+
+<b>Qayerda ishlatiladi?</b>
+Armatura, sim, mix va prutok tayyorlash.
+
+<b>Eslab qoling:</b>
+To'g'rilab kesish = egri simni to'g'rilab, uzunlikka kesadi.
+
+<i>Eslatma: bu tur haqida batafsil ma'lumotni darsligingizdan tekshiring.</i>`,
+            modellar: [
+              { nom: "SPO 50/6-12", video: "vLDonH1eRwE" }
+            ]
+          },
+          {
+            nom: "5. Lentali arra dastgohlari",
+            matn: `<b>Bu nima? (Это что?)</b>
+Ikki shkiv orasida aylanib yuradigan tishli lenta (arra) bilan kesuvchi stanoklar (rus tilida "ленточнопильные").
+
+<b>Afzalliklari:</b>
+• Kesim yupqa, material kam isrof bo'ladi
+• Katta kesim kesish mumkin
+
+<b>Kamchiliklari:</b>
+• Lenta vaqt o'tishi bilan yeyiladi
+
+<b>Qayerda ishlatiladi?</b>
+Prokat, quvur va profillarni kesishda.
+
+<b>Eslab qoling:</b>
+Lentali arra = uzluksiz tishli lenta, yupqa kesim.`,
+            modellar: [
+              { nom: "SL-450", video: "Pamegx-Yf4s" }
+            ]
+          },
+          {
+            nom: "6. Diskli arra dastgohlari",
+            matn: `<b>Bu nima? (Это что?)</b>
+Aylanuvchi tishli disk (arra) bilan kesuvchi stanoklar (rus tilida "дисковые пилы").
+
+<b>Afzalliklari:</b>
+• Kesish tez
+• Kesim aniq
+
+<b>Kamchiliklari:</b>
+• Disk qimmat
+
+<b>Qayerda ishlatiladi?</b>
+Profil, quvur, sterjenni uzunlikka kesishda.
+
+<b>Eslab qoling:</b>
+Diskli arra = aylanuvchi tishli disk bilan tez kesish.`,
+            modellar: [
+              { nom: "FALCON 302", video: "DG3cZpf8EF4" }
+            ]
+          },
+          {
+            nom: "7. Ketma-ket yurib kesuvchi (nozhovka) arra dastgohlari",
+            matn: `<b>Bu nima? (Это что?)</b>
+Ilgarilanma-qaytma harakat qiluvchi arra (nozhovka) bilan kesuvchi stanoklar (rus tilida "ножовочные").
+
+<b>Qanday ishlaydi?</b>
+Arra faqat oldinga yurishda kesadi, orqaga qaytishda ko'tarilib bo'sh yuradi.
+
+<b>Afzalliklari:</b>
+• Tuzilishi oddiy va arzon
+
+<b>Kamchiliklari:</b>
+• Unumdorligi past
+
+<b>Eslab qoling:</b>
+Nozhovka arra = oddiy va arzon, lekin sekin.
+
+<i>Eslatma: bu tur haqida batafsil ma'lumotni darsligingizdan tekshiring.</i>`,
+            modellar: [
+              { nom: "8725", video: "YwRJVwQcOr8" }
+            ]
+          }
+        ]
+      },
+      9: {
+        nom: "Boshqa turdagi dastgohlar",
+        matn: "Yuqoridagi guruhlarga kirmaydigan, o'ziga xos vazifali stanoklar (rus tilida \"разные станки\").",
+        turlar: [
+          {
+            nom: "1. Quvur va muftalarni ishlovchi dastgohlar",
+            matn: `<b>Bu nima? (Это что?)</b>
+Quvur uchlarini yo'nish, rezba kesish va muftalarni ishlash uchun stanoklar (rus tilida "муфто- и трубообрабатывающие").
+
+<b>Qayerda ishlatiladi?</b>
+Quvur ishlab chiqarish va neft-gaz uskunalari zavodlarida.
+
+<b>Eslab qoling:</b>
+Quvur va muftalarni ishlash = quvur uchi va rezbasini tayyorlash.
+
+<i>Eslatma: bu tur haqida batafsil ma'lumotni darsligingizdan tekshiring.</i>`,
+            modellar: [
+              { nom: "B-Matic 2A", video: "p4_sAkyqRFI" }
+            ]
+          },
+          {
+            nom: "2. Arra nasechka dastgohlari",
+            matn: `<b>Bu nima? (Это что?)</b>
+Arra disklari va boshqa asboblarning tishini ochadigan yoki o'tkirlaydigan stanoklar (rus tilida "пилонасекательные").
+
+<b>Eslab qoling:</b>
+Arra nasechka = arra va asbob tishini ochish.
+
+<i>Eslatma: bu tur haqida batafsil ma'lumotni darsligingizdan tekshiring.</i>`,
+            modellar: []
+          },
+          {
+            nom: "3. To'g'rilash va markazsiz silliqlash dastgohlari",
+            matn: `<b>Bu nima? (Это что?)</b>
+Sterjen va valni to'g'rilaydigan yoki markazsiz (detalni markazlarda mahkamlamasdan) tozalaydigan stanoklar (rus tilida "правильно- и бесцентровообдирочные").
+
+<b>Eslab qoling:</b>
+To'g'rilash = egilgan sterjen va valni to'g'rilash.
+
+<i>Eslatma: bu tur haqida batafsil ma'lumotni darsligingizdan tekshiring.</i>`,
+            modellar: [
+              { nom: "Sterjen to'g'rilash", video: "bgM6P8Hfhrc" }
+            ]
+          },
+          {
+            nom: "4. Muvozanatlash (balansirovka) dastgohlari",
+            matn: `<b>Bu nima? (Это что?)</b>
+Aylanuvchi detallar (rotor, val, g'ildirak, parrak) og'irligining notekis taqsimlanishini aniqlaydigan va bartaraf etadigan stanoklar (rus tilida "балансировочные").
+
+<b>Nima uchun kerak?</b>
+Muvozanati buzilgan detal aylanganda titraydi, podshipniklarni yeydi va shovqin chiqaradi.
+
+<b>Eslab qoling:</b>
+Balansirovka = aylanuvchi detalning titrashini yo'qotish.`,
+            modellar: [
+              { nom: "9D717", video: "twoBn2hpnUU" }
+            ]
+          },
+          {
+            nom: "5. Ixtisoslashgan va boshqa dastgohlar",
+            matn: `<b>Bu nima? (Это что?)</b>
+Aniq bir vazifa uchun yaratilgan yoki boshqa guruhlarga kirmaydigan stanoklar.
+
+<b>Eslab qoling:</b>
+Boshqa turdagi = tasnifning oldingi guruhlariga kirmagan stanoklar.
+
+<i>Eslatma: bu guruhning aniq tur ro'yxati va model misollarini darsligingizdan tekshirib, to'ldiring.</i>`,
+            modellar: []
+          }
+        ]
+      }
+    };
+
+    function show(n) {
+      document.getElementById("app").classList.add("open");
+      document.body.classList.add("open");
+      closeMenu();
+
+      var items = document.querySelectorAll("#menu li");
+      items.forEach(function (li) {
+        li.classList.remove("active");
+      });
+      items[n - 1].classList.add("active");
+
+      var g = malumot[n];
+      var liTxt = items[n - 1].textContent;
+      var k0 = liTxt.indexOf(" (");
+      var ru = k0 > 0 ? liTxt.slice(k0 + 2, liTxt.lastIndexOf(")")) : "";
+      var nModels = 0, nVideo = 0;
+      g.turlar.forEach(function (t) {
+        (t.modellar || []).forEach(function (m) { nModels++; if (m.video) { nVideo++; } });
+      });
+
+      var html = "<div class='hero'>" +
+        "<svg class='hero-gear' viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'><path fill-rule='evenodd' d='" + gearPath(16, 95, 78, 100, 100) + "'/></svg>" +
+        "<span class='hero-num'>" + n + "</span>" +
+        "<div class='hero-txt'><h2>" + g.nom + "</h2>" + (ru ? "<div class='hero-ru'>" + ru + "</div>" : "") + "</div></div>" +
+        (g.matn ? "<p class='hero-desc'>" + g.matn + "</p>" : "") +
+        "<div class='chips'><span class='chip'><b>" + g.turlar.length + "</b> ta tur</span>" +
+        "<span class='chip'><b>" + nModels + "</b> ta model</span>" +
+        "<span class='chip'><b>" + nVideo + "</b> ta video</span></div>";
+
+      if (g.turlar.length > 0) {
+        html += "<h3 class='sec-title'>Stanok turlari</h3><ul class='turlar'>";
+        g.turlar.forEach(function (t, i) {
+          var nm = (t.modellar || []).length;
+          var vd = (t.modellar || []).filter(function (m) { return m.video; }).length;
+          var meta = nm ? nm + " ta model" + (vd ? " · " + vd + " tasida video" : "") : "Modellar hali qo'shilmagan";
+          html += "<li onclick='play(" + n + "," + i + ")'><span class='tn'>" + (i + 1) + "</span><span class='tb'><span class='tt'>" +
+                  t.nom.replace(/^\d+\.\s*/, "") + "</span><span class='tm'>" + meta + "</span></span></li>";
+        });
+        html += "</ul>";
+      }
+
+      html += "<div id='tur'></div>";
+      document.getElementById("content").innerHTML = html;
+      window.scrollTo(0, 0);
+      setHash("#g" + n);
+    }
+
+    function formatMatn(raw) {
+      var secs = [];
+      var cur = null;
+      var notes = [];
+
+      raw.split("\n").forEach(function (line) {
+        var l = line.trim();
+        if (!l) { return; }
+        if (l.indexOf("<i>Eslatma") === 0) { notes.push(l); return; }
+        var h = l.match(/^<b>([^<]+)<\/b>$/);
+        if (h) {
+          cur = { title: h[1].replace(/:\s*$/, ""), lines: [] };
+          secs.push(cur);
+          return;
+        }
+        if (!cur) { cur = { title: "", lines: [] }; secs.push(cur); }
+        cur.lines.push(l);
+      });
+
+      function body(lines) {
+        var out = "";
+        var i = 0;
+        while (i < lines.length) {
+          var l = lines[i];
+          if (l.indexOf("• ") === 0) {
+            out += "<ul>";
+            while (i < lines.length && lines[i].indexOf("• ") === 0) {
+              out += "<li>" + lines[i].slice(2) + "</li>";
+              i++;
+            }
+            out += "</ul>";
+          } else if (/^\d+\.\s/.test(l)) {
+            out += "<ol start='" + parseInt(l, 10) + "'>";
+            while (i < lines.length && /^\d+\.\s/.test(lines[i])) {
+              out += "<li>" + lines[i].replace(/^\d+\.\s/, "") + "</li>";
+              i++;
+            }
+            out += "</ol>";
+          } else {
+            out += "<p>" + l + "</p>";
+            i++;
+          }
+        }
+        return out;
+      }
+
+      var parts = secs.map(function (s) {
+        var k = s.title.toLowerCase();
+        var kind = "plain";
+        if (k.indexOf("bu nima") === 0) { kind = "intro"; }
+        else if (k.indexOf("afzallik") === 0) { kind = "pros"; }
+        else if (k.indexOf("kamchilik") === 0) { kind = "cons"; }
+        else if (k.indexOf("eslab qoling") === 0) { kind = "memo"; }
+        var head = s.title ? "<h4>" + s.title + "</h4>" : "";
+        return { kind: kind, html: "<section class='blk blk-" + kind + "'>" + head + body(s.lines) + "</section>" };
+      });
+
+      var mi = -1, ii = -1;
+      parts.forEach(function (p, x) {
+        if (p.kind === "memo" && mi < 0) { mi = x; }
+        if (p.kind === "intro" && ii < 0) { ii = x; }
+      });
+      if (mi >= 0 && ii >= 0 && mi > ii + 1) {
+        parts.splice(ii + 1, 0, parts.splice(mi, 1)[0]);
+      }
+
+      var html = "";
+      for (var i = 0; i < parts.length; i++) {
+        var a = parts[i];
+        var b = parts[i + 1];
+        if (b && ((a.kind === "pros" && b.kind === "cons") || (a.kind === "cons" && b.kind === "pros"))) {
+          html += "<div class='pc'>" + a.html + b.html + "</div>";
+          i++;
+        } else {
+          html += a.html;
+        }
+      }
+      notes.forEach(function (n) {
+        html += "<div class='blk-note'>" + n.replace(/<\/?i>/g, "") + "</div>";
+      });
+      return html;
+    }
+
+    function play(n, i, scroll) {
+      var t = malumot[n].turlar[i];
+      var html = "<h3>" + t.nom + "</h3><div class='tur-matn fmt'>" + formatMatn(t.matn) + "</div>";
+
+      if (t.modellar && t.modellar.length > 0) {
+        var noVideo = false;
+        html += "<h3>Modellari (videoni ko'rish uchun bosing)</h3><ul class='modellar'>";
+        t.modellar.forEach(function (m, j) {
+          if (!m.video) { noVideo = true; }
+          html += "<li class='" + (m.video ? "" : "novideo") + "' onclick='playModel(" + n + "," + i + "," + j + ")'>" + m.nom + "</li>";
+        });
+        html += "</ul>";
+        if (noVideo) { html += "<p class='hint'>Xira modellar uchun video hali qo'shilmagan.</p>"; }
+      }
+
+      var k = -1;
+      for (var x = 0; x < order.length; x++) {
+        if (order[x][0] === n && order[x][1] === i) { k = x; break; }
+      }
+      var prev = k > 0 ? order[k - 1] : null;
+      var next = (k >= 0 && k < order.length - 1) ? order[k + 1] : null;
+      html += "<div class='tur-nav'>";
+      if (prev) {
+        html += "<button type='button' class='navbtn' onclick='openType(" + prev[0] + "," + prev[1] + ")'><small>&larr; Oldingi tur</small>" + malumot[prev[0]].turlar[prev[1]].nom + "</button>";
+      }
+      if (next) {
+        html += "<button type='button' class='navbtn next' onclick='openType(" + next[0] + "," + next[1] + ")'><small>Keyingi tur &rarr;</small>" + malumot[next[0]].turlar[next[1]].nom + "</button>";
+      }
+      html += "</div>";
+
+      var box = document.getElementById("tur");
+      box.innerHTML = html;
+
+      document.querySelectorAll(".turlar li").forEach(function (li, x) {
+        li.classList.toggle("active", x === i);
+      });
+      setHash("#g" + n + "t" + (i + 1));
+
+      if (scroll !== false) {
+        box.scrollIntoView({ behavior: "smooth", block: "start" });
+      }
+    }
+
+    function playModel(n, i, j) {
+      var m = malumot[n].turlar[i].modellar[j];
+      document.getElementById("modal-title").innerHTML = m.nom;
+
+      var html = "";
+      if (m.video) {
+        html = "<iframe src='https://www.youtube.com/embed/" + m.video + "?autoplay=1' allow='autoplay; fullscreen' allowfullscreen></iframe>" +
+               "<p><a href='https://www.youtube.com/watch?v=" + m.video + "' target='_blank'>YouTube'da ochish</a></p>";
+      } else {
+        html = "<p>Bu model uchun video hali qo'shilmagan.</p>";
+      }
+
+      document.getElementById("modal-video").innerHTML = html;
+      document.getElementById("modal").classList.add("show");
+    }
+
+    function closeVideo() {
+      document.getElementById("modal").classList.remove("show");
+      document.getElementById("modal-video").innerHTML = "";
+    }
+
+    document.addEventListener("keydown", function (e) {
+      if (e.key === "Escape") { closeVideo(); closeMenu(); closeSearch(); }
+      if (e.key === "/" && !/INPUT|TEXTAREA/.test(document.activeElement.tagName)) {
+        e.preventDefault();
+        openSearch();
+      }
+    });
+
+    function openMenu() {
+      document.getElementById("app").classList.add("menu-open");
+      document.body.classList.add("menu-open");
+      document.getElementById("menu-btn").setAttribute("aria-expanded", "true");
+    }
+
+    function closeMenu() {
+      document.getElementById("app").classList.remove("menu-open");
+      document.body.classList.remove("menu-open");
+      document.getElementById("menu-btn").setAttribute("aria-expanded", "false");
+    }
+
+    function toggleMenu() {
+      if (document.body.classList.contains("menu-open")) { closeMenu(); } else { openMenu(); }
+    }
+
+    window.addEventListener("resize", function () {
+      if (window.innerWidth > 800) { closeMenu(); }
+    });
+
+    function home() {
+      document.getElementById("app").classList.remove("open");
+      document.body.classList.remove("open");
+      closeMenu();
+      window.scrollTo(0, 0);
+      setHash("");
+    }
+
+    var routing = false;
+    var order = [];
+    Object.keys(malumot).forEach(function (g) {
+      malumot[g].turlar.forEach(function (t, i) {
+        order.push([parseInt(g, 10), i]);
+      });
+    });
+
+    function setHash(h) {
+      if (routing) { return; }
+      var cur = location.hash;
+      if (cur === h || (!cur && !h)) { return; }
+      try {
+        history.pushState(null, "", h ? h : location.pathname + location.search);
+      } catch (e) {}
+    }
+
+    function openType(g, i) {
+      closeSearch();
+      routing = true;
+      try { show(g); } finally { routing = false; }
+      play(g, i, true);
+    }
+
+    function route() {
+      routing = true;
+      try {
+        var m = location.hash.match(/^#g(\d)(?:t(\d+))?$/);
+        if (m && malumot[m[1]]) {
+          var g = parseInt(m[1], 10);
+          show(g);
+          var t = m[2] ? parseInt(m[2], 10) - 1 : -1;
+          if (t >= 0 && malumot[g].turlar[t]) { play(g, t, true); }
+        } else {
+          home();
+        }
+      } finally {
+        routing = false;
+      }
+    }
+
+    window.addEventListener("popstate", route);
+
+    var searchIdx = null;
+
+    function norm(s) {
+      var map = { "а": "a", "в": "b", "е": "e", "к": "k", "м": "m", "н": "h", "о": "o", "р": "p", "с": "c", "т": "t", "х": "x", "у": "y" };
+      return String(s).toLowerCase()
+        .replace(/[‘’ʻʼ`´]/g, "'")
+        .replace(/[авекмнорстху]/g, function (c) { return map[c]; });
+    }
+
+    function buildIndex() {
+      searchIdx = [];
+      Object.keys(malumot).forEach(function (g) {
+        malumot[g].turlar.forEach(function (t, i) {
+          var models = (t.modellar || []).map(function (m) { return m.nom; }).join(" ");
+          searchIdx.push({
+            g: parseInt(g, 10),
+            i: i,
+            title: t.nom,
+            group: malumot[g].nom,
+            models: models,
+            nt: norm(t.nom),
+            nm: norm(models),
+            ng: norm(malumot[g].nom),
+            nx: norm(t.matn.replace(/<[^>]+>/g, " "))
+          });
+        });
+      });
+    }
+
+    function doSearch() {
+      if (!searchIdx) { buildIndex(); }
+      var q = norm(document.getElementById("q").value).trim();
+      var box = document.getElementById("results");
+      if (q.length < 2) {
+        box.innerHTML = "<div class='res-empty'>Masalan: <b>frezer</b>, <b>6Р82</b>, <b>parma</b>, <b>shpindel</b></div>";
+        return;
+      }
+      var tokens = q.split(/\s+/);
+      var found = [];
+      searchIdx.forEach(function (e) {
+        var score = 0;
+        for (var k = 0; k < tokens.length; k++) {
+          var tk = tokens[k];
+          var s = 0;
+          if (e.nt.indexOf(tk) >= 0) { s += 100; }
+          if (e.nm.indexOf(tk) >= 0) { s += 60; }
+          if (e.ng.indexOf(tk) >= 0) { s += 30; }
+          if (e.nx.indexOf(tk) >= 0) { s += 1; }
+          if (!s) { return; }
+          score += s;
+        }
+        found.push({ e: e, score: score });
+      });
+      found.sort(function (a, b) { return b.score - a.score; });
+      if (found.length === 0) {
+        box.innerHTML = "<div class='res-empty'>Hech narsa topilmadi. Boshqa so'z bilan urinib ko'ring.</div>";
+        return;
+      }
+      var html = "";
+      found.slice(0, 40).forEach(function (f) {
+        var e = f.e;
+        html += "<button type='button' class='res' onclick='openType(" + e.g + "," + e.i + ")'><b>" + e.title + "</b><small>" + e.g + ". " + e.group + (e.models ? " · " + e.models : "") + "</small></button>";
+      });
+      if (found.length > 40) {
+        html += "<div class='res-empty'>Yana " + (found.length - 40) + " ta natija bor. So'rovni aniqroq yozing.</div>";
+      }
+      box.innerHTML = html;
+    }
+
+    function openSearch() {
+      closeMenu();
+      document.getElementById("search").classList.add("show");
+      doSearch();
+      setTimeout(function () { document.getElementById("q").focus(); }, 50);
+    }
+
+    function closeSearch() {
+      document.getElementById("search").classList.remove("show");
+    }
+
+    function buildHome() {
+      var items = document.querySelectorAll("#menu li");
+      var html = "<button type='button' class='home-search' onclick='openSearch()'><span>&#128269;</span> Stanok, model yoki so'z qidiring...</button><div class='cards'>";
+      items.forEach(function (li, idx) {
+        var n = idx + 1;
+        var txt = li.textContent;
+        var k = txt.indexOf(" (");
+        var uz = k > 0 ? txt.slice(0, k) : txt;
+        var ru = k > 0 ? txt.slice(k + 2, txt.lastIndexOf(")")) : "";
+        var turlar = malumot[n].turlar;
+        var withVideo = 0;
+        turlar.forEach(function (t) {
+          if ((t.modellar || []).some(function (m) { return m.video; })) { withVideo++; }
+        });
+        var meta = turlar.length + " ta tur" + (withVideo ? " · " + withVideo + " tasida video" : "");
+        html += "<button type='button' class='card' onclick='show(" + n + ")'><span class='num'>" + n + "</span><span class='body'><span class='t'>" + uz + "</span>" + (ru ? "<span class='r'>" + ru + "</span>" : "") + "<span class='c'>" + meta + "</span></span></button>";
+      });
+      html += "</div>";
+      document.getElementById("home").innerHTML = html;
+    }
+
+    buildHome();
+    function gearPath(teeth, R, r, cx, cy) {
+      var d = "";
+      var step = 2 * Math.PI / teeth;
+      for (var i = 0; i < teeth; i++) {
+        var a = i * step;
+        var pts = [[r, a - step * 0.28], [R, a - step * 0.16], [R, a + step * 0.16], [r, a + step * 0.28]];
+        pts.forEach(function (p, k) {
+          d += (i === 0 && k === 0 ? "M" : "L") +
+               (cx + p[0] * Math.cos(p[1])).toFixed(1) + " " +
+               (cy + p[0] * Math.sin(p[1])).toFixed(1) + " ";
+        });
+      }
+      var h = r * 0.4;
+      d += "Z M " + (cx + h) + " " + cy + " A " + h + " " + h + " 0 1 0 " + (cx - h) + " " + cy +
+           " A " + h + " " + h + " 0 1 0 " + (cx + h) + " " + cy + " Z";
+      return d;
+    }
+
+    function buildBg() {
+      var cfg = [
+        { l: "3%",  t: "10%", s: 190, z: 14, fd: 26, sd: 50, dir: "normal",  dl: "0s" },
+        { l: "88%", t: "6%",  s: 130, z: 10, fd: 22, sd: 36, dir: "reverse", dl: "-6s" },
+        { l: "7%",  t: "62%", s: 130, z: 10, fd: 28, sd: 34, dir: "reverse", dl: "-3s" },
+        { l: "84%", t: "58%", s: 210, z: 16, fd: 30, sd: 60, dir: "normal",  dl: "-9s" },
+        { l: "45%", t: "80%", s: 150, z: 12, fd: 24, sd: 44, dir: "normal",  dl: "-12s" },
+        { l: "28%", t: "-4%", s: 110, z: 9,  fd: 20, sd: 32, dir: "reverse", dl: "-4s" },
+        { l: "66%", t: "88%", s: 100, z: 8,  fd: 25, sd: 30, dir: "normal",  dl: "-8s" },
+        { l: "93%", t: "84%", s: 90,  z: 8,  fd: 21, sd: 28, dir: "reverse", dl: "-2s" }
+      ];
+      var html = "";
+      cfg.forEach(function (c) {
+        html += "<div class='bg-item' style='left:" + c.l + ";top:" + c.t + ";width:" + c.s + "px;height:" + c.s +
+                "px;--fd:" + c.fd + "s;--sd:" + c.sd + "s;--dir:" + c.dir + ";--dl:" + c.dl + "'>" +
+                "<svg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'><path fill='currentColor' fill-rule='evenodd' d='" +
+                gearPath(c.z, 95, 78, 100, 100) + "'/></svg></div>";
+      });
+      document.getElementById("bgfx").innerHTML = html;
+    }
+
+    buildBg();
+    if (location.hash) { route(); }
+  </script>
+</body>
+</html>
